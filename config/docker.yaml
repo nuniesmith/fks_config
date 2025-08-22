@@ -1,0 +1,363 @@
+# =============================================================================
+# FKS Trading Systems - Simplified Docker Configuration
+# Consolidates: docker.yaml, environment.yaml docker settings
+# =============================================================================
+
+# Docker system configuration
+system:
+  app:
+    version: "1.0.0"
+    environment: "development"
+    timezone: "America/New_York"
+  
+  user:
+    name: "appuser"
+    id: 1088
+    group_id: 1088
+  
+  registry:
+    username: "nuniesmith"
+    repository: "fks"
+
+# Build configuration
+build:
+  # Base settings
+  compose_bake: true
+  volume_driver: "local"
+  docker_debug: true
+  keep_container_alive: true
+  
+  # Version settings
+  versions:
+    python: "3.11"
+    ubuntu: "ubuntu24.04"
+    cuda: "12.8.0"
+  
+  # Paths (hardcoded)
+  paths:
+    common_dockerfile: "/home/${USER}/fks/deployment/docker/Dockerfile"
+    common_entrypoint: "/home/${USER}/fks/deployment/docker/entrypoint.sh"
+    requirements: "/home/${USER}/fks/requirements.txt"
+    project_root: "/home/${USER}/fks"
+  
+  # Health check settings
+  healthcheck:
+    enabled: true
+    interval: "30s"
+    timeout: "10s"
+    retries: 3
+    start_period: "10s"
+  
+  # Build optimization
+  parallel_jobs: 4
+  cache_enabled: true
+  multi_stage: true
+
+# Service configurations
+services:
+  # CPU-based services
+  cpu_services:
+    api:
+      image_tag: "nuniesmith/fks:api"
+      container_name: "fks_api"
+      port: 8000
+      runtime: "python"
+      healthcheck_cmd: "curl --fail http://localhost:8000/health || exit 1"
+      
+    app:
+      image_tag: "nuniesmith/fks:app"
+      container_name: "fks_app"
+      port: 9000
+      runtime: "python"
+      trading_mode: "paper"
+      healthcheck_cmd: "curl --fail http://localhost:9000/health || exit 1"
+      
+    data:
+      image_tag: "nuniesmith/fks:data"
+      container_name: "fks_data"
+      port: 9001
+      runtime: "python"
+      healthcheck_cmd: "curl --fail http://localhost:9001/health || exit 1"
+      
+    web:
+      image_tag: "nuniesmith/fks:web"
+      container_name: "fks_web"
+      port: 9999
+      runtime: "python"
+      healthcheck_cmd: "curl --fail http://localhost:9999/health || exit 1"
+      
+    worker:
+      image_tag: "nuniesmith/fks:worker"
+      container_name: "fks_worker"
+      port: 8001
+      runtime: "python"
+      count: 2
+      healthcheck_cmd: "curl --fail http://localhost:8001/health || exit 1"
+  
+  # GPU-based services
+  gpu_services:
+    training:
+      image_tag: "nuniesmith/fks:training"
+      container_name: "fks_training"
+      port: 8088
+      runtime: "python"
+      gpu_required: true
+      epochs: 50
+      healthcheck_cmd: "curl --fail http://localhost:8088/health || nvidia-smi > /dev/null || exit 1"
+      
+    transformer:
+      image_tag: "nuniesmith/fks:transformer"
+      container_name: "fks_transformer"
+      port: 8089
+      runtime: "python"
+      gpu_required: true
+      healthcheck_cmd: "curl --fail http://localhost:8089/health || nvidia-smi > /dev/null || exit 1"
+
+# Database services
+databases:
+  redis:
+    image_tag: "redis:latest"
+    container_name: "fks_redis"
+    port: 6379
+    password: "123456"
+    memory_limit: "512m"
+    healthcheck_cmd: "redis-cli -a 123456 ping || exit 1"
+    
+  postgres:
+    image_tag: "postgres:latest"
+    container_name: "fks_postgres"
+    port: 5432
+    database: "financial_data"
+    user: "postgres"
+    password: "123456"
+    memory_limit: "1g"
+    healthcheck_cmd: "pg_isready -U postgres"
+
+# Network configuration
+networks:
+  frontend:
+    name: "fks_frontend"
+    driver: "bridge"
+    internal: false
+    
+  backend:
+    name: "fks_backend"
+    driver: "bridge"
+    internal: false
+    
+  database:
+    name: "fks_database"
+    driver: "bridge"
+    internal: true
+
+# Volume configuration
+volumes:
+  # Application volumes
+  data:
+    name: "fks_data"
+    driver: "local"
+    path: "/home/${USER}/fks/data"
+    
+  logs:
+    name: "fks_logs"
+    driver: "local"
+    path: "/home/${USER}/fks/logs"
+    
+  models:
+    name: "fks_models"
+    driver: "local"
+    path: "/home/${USER}/fks/models"
+    
+  config:
+    name: "fks_config"
+    driver: "local"
+    path: "/home/${USER}/fks/config"
+  
+  # Database volumes
+  postgres_data:
+    name: "fks_postgres_data"
+    driver: "local"
+    
+  redis_data:
+    name: "fks_redis_data"
+    driver: "local"
+
+# Environment variables
+environment:
+  global:
+    FKS_MODE: "development"
+    FKS_LOG_LEVEL: "INFO"
+    PROJECT_ROOT: "/home/${USER}/fks"
+    PYTHONPATH: "/app/src"
+    
+  database:
+    POSTGRES_DB: "financial_data"
+    POSTGRES_USER: "postgres"
+    POSTGRES_PASSWORD: "123456"
+    REDIS_PASSWORD: "123456"
+    
+  security:
+    JWT_SECRET_KEY: "CHANGE_THIS_TO_A_RANDOM_SECRET_KEY"
+    API_SECRET_KEY: "CHANGE_THIS_TO_A_RANDOM_SECRET_KEY"
+
+# Resource limits
+resources:
+  # Default limits for CPU services
+  cpu_defaults:
+    memory: "2g"
+    cpus: "2"
+    memory_reservation: "512m"
+    
+  # Limits for GPU services
+  gpu_defaults:
+    memory: "4g"
+    cpus: "4"
+    memory_reservation: "1g"
+    
+  # Database limits
+  database_defaults:
+    memory: "1g"
+    cpus: "1"
+    memory_reservation: "256m"
+
+# Service groups for orchestration
+service_groups:
+  # Core services (minimum required)
+  core:
+    - "redis"
+    - "postgres"
+    - "api"
+    - "app"
+    - "data"
+    
+  # Machine learning services
+  ml:
+    - "redis"
+    - "postgres"
+    - "data"
+    - "training"
+    - "transformer"
+    
+  # Web interface
+  web:
+    - "redis"
+    - "postgres"
+    - "api"
+    - "web"
+    
+  # Full system
+  all:
+    - "redis"
+    - "postgres"
+    - "data"
+    - "api"
+    - "worker"
+    - "app"
+    - "training"
+    - "transformer"
+    - "web"
+
+# Startup dependencies and order
+dependencies:
+  # Phase 1: Infrastructure
+  phase1:
+    - "redis"
+    - "postgres"
+    
+  # Phase 2: Core services
+  phase2:
+    depends_on: ["redis", "postgres"]
+    services:
+      - "data"
+      
+  # Phase 3: Business logic
+  phase3:
+    depends_on: ["data"]
+    services:
+      - "api"
+      - "worker"
+      
+  # Phase 4: Applications
+  phase4:
+    depends_on: ["api", "data"]
+    services:
+      - "app"
+      - "training"
+      - "transformer"
+      
+  # Phase 5: User interface
+  phase5:
+    depends_on: ["api"]
+    services:
+      - "web"
+
+# Docker Compose generation settings
+compose:  
+  # Global compose settings
+  global_settings:
+    restart: "unless-stopped"
+    logging:
+      driver: "json-file"
+      options:
+        max_size: "100m"
+        max_file: "3"
+  
+  # Service overrides by environment
+  environment_overrides:
+    development:
+      build_args:
+        - "INSTALL_DEV_DEPS=true"
+        - "DEBUG=true"
+      volumes:
+        - "/home/${USER}/fks:/app:rw"
+        
+    production:
+      build_args:
+        - "INSTALL_DEV_DEPS=false"
+        - "DEBUG=false"
+      read_only: true
+      
+    staging:
+      build_args:
+        - "INSTALL_DEV_DEPS=false"
+        - "DEBUG=true"
+
+# Monitoring and observability
+monitoring:
+  # Health check settings
+  health_checks:
+    enabled: true
+    interval: 30
+    timeout: 10
+    retries: 3
+    start_period: 10
+    
+  # Logging settings  
+  logging:
+    driver: "json-file"
+    centralized: false
+    retention: "7d"
+    
+  # Metrics collection
+  metrics:
+    enabled: false
+    prometheus_port: 9090
+    grafana_port: 3000
+
+# Security settings
+security:
+  # Container security
+  container:
+    no_new_privileges: true
+    read_only_root: false
+    user_namespace: false
+    
+  # Network security
+  network:
+    internal_communication: true
+    external_access: ["web", "api"]
+    
+  # Secrets management
+  secrets:
+    use_docker_secrets: false
+    env_file: "/home/${USER}/fks/.env"

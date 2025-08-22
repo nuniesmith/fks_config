@@ -1,0 +1,76 @@
+{
+  "lgmm": {
+    "data_source": {
+      "provider": "yfinance",
+      "retry_attempts": 3,
+      "timeout": 30,
+      "cache_duration": 3600
+    },
+    "model_defaults": {
+      "n_components": 2,
+      "poly_degree": 2,
+      "train_window": 252,
+      "std_multiplier": 2.0
+    },
+    "signal_generation": {
+      "quality_threshold": 0.60,
+      "wave_ratio_threshold": 1.5,
+      "lookback_window": 252,
+      "rolling_window": true
+    },
+    "backtesting": {
+      "initial_capital": 150000,
+      "futures_mode": true,
+      "commission": 5,
+      "slippage": 0.0001
+    }
+  },
+  "data_processing": {
+    "timezone_handling": "naive",
+    "fill_method": "forward",
+    "outlier_detection": true,
+    "outlier_threshold": 3.0
+  },
+  "performance_metrics": {
+    "calculate_sharpe": true,
+    "calculate_drawdown": true,
+    "calculate_win_rate": true,
+    "risk_free_rate": 0.02,
+    "benchmark": "SPY"
+  },
+  "plotting": {
+    "figure_size": [14, 8],
+    "style": "default",
+    "colors": {
+      "price": "black",
+      "predicted": "blue", 
+      "upper_bound": "red",
+      "lower_bound": "green",
+      "buy_signal": "green",
+      "sell_signal": "red"
+    },
+    "alpha": {
+      "bounds": 0.5,
+      "fill": 0.1
+    }
+  },
+  "testing": {
+    "quick_test": {
+      "start_date": "2023-01-01",
+      "end_date": "2024-01-01",
+      "train_window": 50,
+      "ticker": "GC=F"
+    },
+    "full_test": {
+      "start_date": "2020-01-01", 
+      "end_date": "2024-12-31",
+      "train_window": 252,
+      "ticker": "GC=F"
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "suppress_warnings": true,
+    "progress_bars": true
+  }
+}

@@ -1,0 +1,145 @@
+# ============================================================
+# FKS Trading Systems - Production Environment Configuration
+# ============================================================
+
+# Environment identifier
+environment:
+  type: "production"
+  debug_mode: false
+
+# Log levels for production
+logging:
+  log_level: "WARNING" # Reduce log noise in production
+  verbose_level: "INFO"
+
+# Database connections for production
+databases:
+  postgres:
+    host: "postgres-prod"
+    password: "${POSTGRES_PASSWORD}"
+    schema: "production_schema"
+    pool_size: 50 # Increased for production
+    max_overflow: 25
+    connect_timeout: 60
+  
+  redis:
+    host: "redis-prod"
+    password: "${REDIS_PASSWORD}"
+    ssl: true # Enable SSL in production
+
+# Service hostnames for production
+services:
+  api:
+    host: "api-prod"
+    workers: 8 # More workers in production
+  worker:
+    host: "worker-prod"
+    workers: 6
+  app:
+    host: "app-prod"
+    workers: 8
+  data:
+    host: "data-prod"
+    workers: 4
+  pine:
+    host: "pine-prod"
+    workers: 4
+  web:
+    host: "web-prod"
+    workers: 8
+  training:
+    host: "training-prod"
+    workers: 2
+  watcher:
+    host: "watcher-prod"
+    workers: 4
+
+# Trading settings for production
+trading:
+  mode: "live" # Live trading in production
+  live_trading:
+    max_open_positions: 5
+    max_position_size_percent: 10 # More conservative in production
+    emergency_stop_percent: 10 # More conservative in production
+    require_confirmation: true
+
+# API settings
+api:
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 60 # More conservative in production
+  authentication:
+    jwt:
+      token_expire_minutes: 720 # 12 hours for production
+    require_2fa: true # Additional security in production
+
+# Data source settings
+data_sources:
+  cache_enabled: true
+  use_local_cache: true
+  
+  # Use production APIs with auth
+  bitstamp:
+    api_key: "${BITSTAMP_API_KEY}"
+    api_secret: "${BITSTAMP_API_SECRET}"
+    use_testnet: false
+  
+  yahoo_finance:
+    enabled: true
+    
+  polygon:
+    api_key: "${POLYGON_API_KEY}"
+
+# ML settings
+ml:
+  accelerator: "cuda" # Use GPU in production
+  max_epochs: 50 # Full training in production
+
+# Feature flags - production specific
+feature_flags:
+  enable_real_data: true
+  enable_debug_endpoints: false # Disable debug endpoints in prod
+  enable_profiling: false # Disable profiling in prod
+  
+# Server settings
+server:
+  debug: false
+  cors_origins: ["https://fkstrading.com"]
+  
+# Security settings - maximum for production
+security:
+  secret_key: "${PRODUCTION_SECRET_KEY}"
+  cors:
+    enabled: true
+    allow_origins: ["https://fkstrading.com"]
+  ssl:
+    enabled: true
+    redirect: true
+    hsts: true
+
+# Risk management - more conservative in production
+risk_management:
+  max_drawdown_percent: 15 # Lower in production
+  position_sizing:
+    percent: 1 # Lower risk in production
+  stop_loss:
+    percent: 1.5 # Tighter in production
+
+# Monitoring for production
+monitoring:
+  enabled: true
+  alerting: true
+  alert_channels:
+    - type: "email"
+      addresses: ["prod-alerts@example.com", "trading@example.com"]
+    - type: "slack"
+      webhook: "${PRODUCTION_SLACK_WEBHOOK}"
+    - type: "pagerduty"
+      service_key: "${PAGERDUTY_SERVICE_KEY}"
+
+# Backup settings
+backup:
+  enabled: true
+  interval: "1h"
+  retention_days: 30
+  offsite_backup: true

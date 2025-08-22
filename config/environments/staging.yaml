@@ -1,0 +1,112 @@
+# ============================================================
+# FKS Trading Systems - Staging Environment Configuration
+# ============================================================
+
+# Environment identifier
+environment:
+  type: "staging"
+  debug_mode: false
+
+# Log levels for staging
+logging:
+  log_level: "INFO"
+  verbose_level: "INFO"
+
+# Database connections for staging
+databases:
+  postgres:
+    host: "postgres-staging"
+    password: "${POSTGRES_PASSWORD}"
+    schema: "staging_schema"
+  
+  redis:
+    host: "redis-staging"
+    password: "${REDIS_PASSWORD}"
+
+# Service hostnames for staging
+services:
+  api:
+    host: "api-staging"
+  worker:
+    host: "worker-staging"
+  app:
+    host: "app-staging"
+  data:
+    host: "data-staging"
+  pine:
+    host: "pine-staging"
+  web:
+    host: "web-staging"
+  training:
+    host: "training-staging"
+  watcher:
+    host: "watcher-staging"
+
+# Trading settings for staging
+trading:
+  mode: "paper" # Always use paper trading in staging
+  paper_trading:
+    initial_balance: 50000
+    simulate_slippage: true
+    slippage_percent: 0.05
+    simulate_fees: true
+    fee_percent: 0.1
+
+# API settings
+api:
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 120
+  authentication:
+    jwt:
+      token_expire_minutes: 1440 # 24 hours for staging
+
+# Data source settings
+data_sources:
+  cache_enabled: true
+  use_local_cache: true
+  
+  # Use test APIs in staging
+  bitstamp:
+    api_key: "${BITSTAMP_API_KEY}"
+    api_secret: "${BITSTAMP_API_SECRET}"
+    use_testnet: true
+  
+  yahoo_finance:
+    enabled: true
+    
+  polygon:
+    api_key: "${POLYGON_API_KEY}"
+
+# ML settings
+ml:
+  accelerator: "cuda" # Use GPU in staging
+  max_epochs: 10 # More epochs in staging
+
+# Feature flags - staging specific
+feature_flags:
+  enable_real_data: true
+  enable_debug_endpoints: true
+  enable_profiling: true
+  
+# Server settings
+server:
+  debug: false
+  cors_origins: ["https://staging.fkstrading.com"]
+  
+# Security settings - tightened for staging
+security:
+  secret_key: "${STAGING_SECRET_KEY}"
+  cors:
+    enabled: true
+    allow_origins: ["https://staging.fkstrading.com"]
+
+# Monitoring for staging
+monitoring:
+  enabled: true
+  alerting: true
+  alert_channels:
+    - type: "email"
+      addresses: ["staging-alerts@example.com"]
+    - type: "slack"
+      webhook: "${STAGING_SLACK_WEBHOOK}"

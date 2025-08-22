@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: fks-development
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - name: redis
+        env:
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+              name: timezone-config
+              key: TZ
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: 500m
+          requests:
+            memory: 256Mi
+            cpu: 250m
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: redis-data-pvc
+          mountPath: /app/data
+          readOnly: true
+      volumes:
+      - name: redis-data-pvc
+        persistentVolumeClaim:
+          claimName: redis-data-pvc

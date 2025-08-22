@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fks-training
+  namespace: fks-development
+  labels:
+    app: fks-training
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fks-training
+  template:
+    metadata:
+      labels:
+        app: fks-training
+    spec:
+      serviceAccountName: fks-training-service-account
+      containers:
+        - name: fks-training
+          image: ${TRAINING_IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "main", "service", "training"]
+          ports:
+            - containerPort: 8086
+          envFrom:
+            - configMapRef:
+                name: fks-training-config
+          env:
+            - name: POSTGRES_HOST
+              value: "postgres-service"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: REDIS_HOST
+              value: "redis-service"
+            - name: REDIS_PORT
+              value: "6379"
+          resources:
+            limits:
+              # GPU resource request for training
+              nvidia.com/gpu: 1
+              cpu: "4"
+              memory: "8Gi"
+            requests:
+              nvidia.com/gpu: 1
+              cpu: "2"
+              memory: "4Gi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8086
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8086
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          volumeMounts:
+            - name: model-storage
+              mountPath: /app/models
+      volumes:
+        - name: model-storage
+          persistentVolumeClaim:
+            claimName: fks-model-storage-pvc
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fks-watcher
+  namespace: fks-development
+  labels:
+    app: fks-watcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fks-watcher
+  template:
+    metadata:
+      labels:
+        app: fks-watcher
+    spec:
+      serviceAccountName: fks-watcher-service-account
+      containers:
+        - name: fks-watcher
+          image: ${WATCHER_IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "main", "service", "watcher"]
+          ports:
+            - containerPort: 8087
+          envFrom:
+            - configMapRef:
+                name: fks-watcher-config
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              nvidia.com/gpu: 1
+              cpu: "1"
+              memory: "2Gi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8087
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8087
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3

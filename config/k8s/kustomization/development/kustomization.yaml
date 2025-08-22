@@ -1,0 +1,71 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: fks-development
+
+resources:
+  - ../../namespaces/fks-namespaces.yaml
+  - ../../sa/service-accounts.yaml
+  - ../../cluster-roles/fks-cluster-roles.yaml
+  - ../../cluster-role-bindings/fks-cluster-role-bindings.yaml
+  - ../../configmaps/fks-app-configmaps.yaml
+  - ../../secrets/fks-secrets.yaml
+  - ../../storage/fks-pvcs.yaml
+  - ../../services/fks-services.yaml
+  - ../../ingresses/fks-ingresses.yaml
+  - ../../workloads/infrastructure/fks-infra-deployments.yaml
+  - ../../workloads/applications/fks-app-deployments.yaml
+  - ../../workloads/workers/fks_worker-pine-deployments.yaml
+  - ../../workloads/gpu/fks-gpu-deployments.yaml
+
+# Image tags for development environment
+images:
+  - name: ${API_IMAGE_TAG}
+    newName: fks/api
+    newTag: dev
+  - name: ${APP_IMAGE_TAG}
+    newName: fks/app
+    newTag: dev
+  - name: ${DATA_IMAGE_TAG}
+    newName: fks/data
+    newTag: dev
+  - name: ${PINE_IMAGE_TAG}
+    newName: fks/pine
+    newTag: dev
+  - name: ${TRAINING_IMAGE_TAG}
+    newName: fks/training
+    newTag: dev
+  - name: ${WATCHER_IMAGE_TAG}
+    newName: fks/watcher
+    newTag: dev
+  - name: ${WEB_IMAGE_TAG}
+    newName: fks/web
+    newTag: dev
+  - name: ${WORKER_IMAGE_TAG}
+    newName: fks/worker
+    newTag: dev
+  - name: ${NGINX_IMAGE_TAG}
+    newName: fks/nginx
+    newTag: dev
+
+# Configure the namespace selector
+namePrefix: dev-
+
+# ConfigMap patches for development environment
+patchesStrategicMerge:
+  - |-
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: fks-api-config
+    data:
+      APP_LOG_LEVEL: "debug"
+
+  - |-
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: fks-app-config
+    data:
+      APP_LOG_LEVEL: "debug"
+      TRADING_MODE: "paper"

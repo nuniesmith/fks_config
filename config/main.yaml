@@ -1,0 +1,285 @@
+# =============================================================================
+# FKS Trading Systems - Simplified Main Configuration
+# Replaces: main.yaml, environment.yaml and complex import system
+# =============================================================================
+
+# System information
+system:
+  name: "FKS Trading Systems"
+  version: "1.0.0"
+  description: "Financial trading framework with multi-service architecture"
+  timezone: "America/Toronto"
+
+# Environment configuration
+environment:
+  mode: "development"  # Options: development, staging, production
+  debug: false
+  
+  # Hardcoded paths (no dynamic resolution)
+  paths:
+    project_root: "/home/${USER}/fks"
+    config_dir: "/home/${USER}/fks/config"
+    scripts_dir: "/home/${USER}/fks/scripts"
+    data_dir: "/home/${USER}/fks/data"
+    logs_dir: "/home/${USER}/fks/logs"
+    models_dir: "/home/${USER}/fks/models"
+    deployment_dir: "/home/${USER}/fks/deployment"
+    temp_dir: "/home/${USER}/fks/temp"
+  
+  # Key files
+  files:
+    main_config: "/home/${USER}/fks/config/main.yaml"
+    services_config: "/home/${USER}/fks/config/services.yaml"
+    docker_config: "/home/${USER}/fks/config/docker.yaml"
+  compose_file: "/home/${USER}/fks/docker-compose.yml"
+  requirements_file: "/home/${USER}/fks/requirements.txt"
+
+# Logging configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARN, ERROR
+  file: "/home/${USER}/fks/logs/main.log"
+  rotation:
+    enabled: true
+    max_size: "100MB"
+    backup_count: 5
+  
+  # Component-specific logging
+  components:
+    api: "INFO"
+    data: "INFO"
+    web: "INFO"
+    nginx: "INFO"
+    worker: "INFO"
+    training: "INFO"
+    transformer: "INFO"
+
+# Docker configuration
+docker:
+  compose_command: "auto"  # auto, docker compose, docker-compose
+  build:
+    parallel: true
+    parallel_jobs: 4
+    timeout: 300
+    cache: true
+  
+  # Container settings
+  containers:
+    restart_policy: "unless-stopped"
+    memory_limit: "2g"
+    cpu_limit: "2"
+    
+  # Networks
+  networks:
+    frontend:
+      driver: "bridge"
+      internal: false
+    backend:
+      driver: "bridge"
+      internal: false
+
+# Database configuration
+databases:
+  redis:
+    image: "redis:latest"
+    port: 6379
+    password: "123456"
+    memory_limit: "512m"
+    
+  postgres:
+    image: "postgres:latest"
+    port: 5432
+    database: "financial_data"
+    user: "postgres"
+    password: "123456"
+    memory_limit: "1g"
+
+# Service management
+services:
+  # Global service settings
+  global:
+    startup_wait: 10
+    shutdown_timeout: 30
+    health_check_timeout: 10
+    restart_policy: "on-failure"
+  
+  # Health check configuration
+  health_checks:
+    enabled: true
+    interval: 30
+    timeout: 10
+    retries: 3
+    path: "/health"
+    
+    # Service-specific health check ports
+    ports:
+      api: 8000
+      data: 9001
+      web: 9999
+      nginx: 80
+      worker: 8001
+      training: 8088
+      transformer: 8089
+  
+  # Service startup order
+  startup_order:
+    phase1: ["redis", "postgres"]
+    phase2: ["data"]
+    phase3: ["api", "worker"]
+    phase4: ["training", "transformer"]
+    phase5: ["web", "nginx"]
+
+# Security configuration
+security:
+  authentication:
+    enabled: false  # Set to true in production
+    default_secret: "CHANGE_THIS_TO_A_RANDOM_SECRET_KEY"
+  
+  api_security:
+    rate_limiting: true
+    cors_enabled: true
+    request_size_limit: "10MB"
+
+# Build and deployment
+build:
+  requirements:
+    auto_generate: true
+    base_packages:
+      - "requests>=2.25.1"
+      - "pyyaml>=5.4.0"
+      - "python-dotenv>=0.19.0"
+  
+  optimization:
+    parallel_build: true
+    cache_from_registry: false
+    multi_stage_build: true
+  
+  # Environment-specific settings
+  development:
+    hot_reload: true
+    debug_mode: true
+    install_dev_deps: true
+  
+  production:
+    optimize_size: true
+    security_scan: true
+    install_dev_deps: false
+
+# Market configuration
+market:
+  default_symbols:
+    - "BTCUSDT"
+    - "ETHUSDT"
+    - "SOLUSDT"
+    - "ADAUSDT"
+    - "DOTUSDT"
+  
+  default_timeframes:
+    - "1m"
+    - "5m"
+    - "15m"
+    - "1h"
+    - "4h"
+    - "1d"
+  
+  data_sources:
+    primary: "binance"
+    backup: "yahoo_finance"
+
+# Trading configuration
+trading:
+  mode: "paper"  # paper, live, backtest
+  initial_balance: 10000
+  quote_currency: "USDT"
+  max_open_positions: 5
+  max_position_size_percent: 20
+  
+  risk_management:
+    max_drawdown_percent: 25
+    max_daily_loss_percent: 5
+    default_stop_loss_percent: 2
+    default_take_profit_percent: 3
+
+# Model configuration
+models:
+  default_model: "transformer"
+  
+  # Model storage
+  storage:
+    models_directory: "/home/${USER}/fks/models"
+    checkpoints_directory: "/home/${USER}/fks/models/checkpoints"
+    format: "pytorch"  # pytorch, onnx, tensorrt
+  
+  # Training defaults
+  training:
+    epochs: 50
+    batch_size: 32
+    learning_rate: 0.001
+    early_stopping: true
+    patience: 10
+
+# Feature engineering
+features:
+  core:
+    price_features: true
+    volume_features: true
+    volatility_features: true
+  
+  technical_indicators:
+    enabled: true
+    indicators:
+      - "SMA_9"
+      - "SMA_21"
+      - "EMA_12"
+      - "EMA_26"
+      - "RSI_14"
+      - "MACD"
+      - "BB_20"
+      - "ATR_14"
+      - "VWAP"
+      - "OBV"
+
+# Monitoring and alerts
+monitoring:
+  enabled: true
+  metrics:
+    system_metrics: true
+    business_metrics: true
+    custom_metrics: true
+  
+  alerts:
+    email_notifications: false
+    slack_notifications: false
+    webhook_notifications: false
+
+# Development tools
+development:
+  hot_reload: true
+  debug_toolbar: true
+  profiling: false
+  
+  testing:
+    unit_tests: true
+    integration_tests: true
+    performance_tests: false
+
+# Integration settings
+integrations:
+  requirements_script: "/home/${USER}/fks/scripts/build/requirements.sh"
+  optimizer_script: "/home/${USER}/fks/scripts/build/optimize.sh"
+  
+  external_apis:
+    enabled: false
+    rate_limits:
+      default: 100
+      premium: 1000
+
+# Cleanup and maintenance
+maintenance:
+  auto_cleanup: true
+  log_retention_days: 30
+  temp_file_cleanup: true
+  
+  schedules:
+    daily_cleanup: "0 2 * * *"
+    weekly_backup: "0 3 * * 0"
+    monthly_optimization: "0 4 1 * *"

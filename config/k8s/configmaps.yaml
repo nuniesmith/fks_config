@@ -1,0 +1,174 @@
+# Kubernetes ConfigMaps Configuration
+k8s:
+  configmaps:
+    - name: app-config
+      namespace: app
+      data:
+        DATABASE_URL: "postgresql://user:password@postgres:5432/db"
+        LOG_LEVEL: "debug"
+        ENVIRONMENT: "development"
+    - name: nginx-config
+      namespace: app
+      data:
+        nginx.conf: |
+          server {
+            listen 80;
+            server_name localhost;
+            location / {
+              proxy_pass http://app-service:8080;
+            }
+          }
+    # Added from alertmanager-configmap.yaml
+    - name: alertmanager-config
+      namespace: fks-development
+      data:
+        alertmanager.yml: |
+          global:
+            resolve_timeout: 5m
+          route:
+            group_by: ['alertname']
+            group_wait: 30s
+            group_interval: 5m
+            receiver: 'default'
+          receivers:
+            - name: 'default'
+    - name: fks-api-config
+      namespace: fks-development
+      data:
+        API_PORT: "8080"
+        APP_LOG_LEVEL: "info"
+        CONFIG_DIR: "/app/config"
+        CONFIG_FILE: "/app/config/fks/api.yaml"
+        PYTHONPATH: "/app/src"
+        PYTHONUNBUFFERED: "1"
+        SERVICE_RUNTIME: "python"
+        SERVICE_TYPE: "api"
+        TZ: "America/Toronto"
+    - name: fks-app-config
+      namespace: fks-development
+      data:
+        APP_LOG_LEVEL: "info"
+        CONFIG_DIR: "/app/config"
+        CONFIG_FILE: "/app/config/fks/app.yaml"
+        PYTHONPATH: "/app/src"
+        PYTHONUNBUFFERED: "1"
+        SERVICE_RUNTIME: "python"
+        SERVICE_TYPE: "app"
+        TZ: "America/Toronto"
+        KEEP_CONTAINER_ALIVE: "true"
+        TRADING_MODE: "paper"
+    - name: fks-data-config
+      namespace: fks-development
+      data:
+        APP_LOG_LEVEL: "info"
+        CONFIG_DIR: "/app/config"
+        CONFIG_FILE: "/app/config/fks/data_sources.yaml"
+        PYTHONPATH: "/app/src"
+        PYTHONUNBUFFERED: "1"
+        SERVICE_RUNTIME: "python"
+        SERVICE_TYPE: "data"
+        TZ: "America/Toronto"
+        KEEP_CONTAINER_ALIVE: "true"
+    - name: fks-pine-config
+      namespace: fks-development
+      data:
+        APP_LOG_LEVEL: "info"
+        CONFIG_DIR: "/app/config"
+        CONFIG_FILE: "/app/config/fks/pine.yaml"
+        PYTHONPATH: "/app/src"
+        PYTHONUNBUFFERED: "1"
+        SERVICE_RUNTIME: "python"
+        SERVICE_TYPE: "pine"
+        TZ: "America/Toronto"
+        KEEP_CONTAINER_ALIVE: "true"
+        SYMBOL: "BTCUSD"
+    - name: fks-training-config
+      namespace: fks-development
+      data:
+        APP_LOG_LEVEL: "info"
+        CONFIG_DIR: "/app/config"
+        CONFIG_FILE: "/app/config/fks/training.yaml"
+        PYTHONPATH: "/app/src"
+        PYTHONUNBUFFERED: "1"
+        SERVICE_RUNTIME: "python"
+        SERVICE_TYPE: "training"
+        TZ: "America/Toronto"
+        MPLCONFIGDIR: "/tmp/mpl_config"
+        KEEP_CONTAINER_ALIVE: "true"
+        TRAINING_EPOCHS: "50"
+    - name: fks-watcher-config
+      namespace: fks-development
+      data:
+        APP_LOG_LEVEL: "info"
+        CONFIG_DIR: "/app/config"
+        CONFIG_FILE: "/app/config/fks/watcher.yaml"
+        PYTHONPATH: "/app/src"
+        PYTHONUNBUFFERED: "1"
+        SERVICE_RUNTIME: "python"
+        SERVICE_TYPE: "watcher"
+        TZ: "America/Toronto"
+        MPLCONFIGDIR: "/tmp/mpl_config"
+        KEEP_CONTAINER_ALIVE: "true"
+        MONITOR_INTERVAL: "30"
+    - name: fks-web-config
+      namespace: fks-development
+      data:
+        APP_LOG_LEVEL: "info"
+        CONFIG_DIR: "/app/config"
+        CONFIG_FILE: "/app/config/fks/web.yaml"
+        PYTHONPATH: "/app/src"
+        PYTHONUNBUFFERED: "1"
+        SERVICE_RUNTIME: "python"
+        SERVICE_TYPE: "web"
+        TZ: "America/Toronto"
+        KEEP_CONTAINER_ALIVE: "true"
+        WEB_HOST: "0.0.0.0"
+        WEB_PORT: "8084"
+    - name: fks_worker-config
+      namespace: fks-development
+      data:
+        APP_LOG_LEVEL: "info"
+        CONFIG_DIR: "/app/config"
+        CONFIG_FILE: "/app/config/fks/worker.yaml"
+        PYTHONPATH: "/app/src"
+        PYTHONUNBUFFERED: "1"
+        SERVICE_RUNTIME: "python"
+        SERVICE_TYPE: "worker"
+        TZ: "America/Toronto"
+        KEEP_CONTAINER_ALIVE: "true"
+        WORKER_COUNT: "2"
+    # Added from redis-configmap.yaml
+    - name: redis-config
+      namespace: fks-development
+      data:
+        redis.conf: |
+          # Redis configuration file
+          bind 0.0.0.0
+          protected-mode yes
+          port 6379
+          tcp-backlog 511
+          timeout 0
+          tcp-keepalive 300
+
+          # Logging
+          loglevel notice
+          logfile ""
+
+          # Persistence
+          dbfilename dump.rdb
+          dir /data
+
+          # Memory
+          maxmemory 256mb
+          maxmemory-policy allkeys-lru
+
+          # Replication
+          replica-serve-stale-data yes
+          replica-read-only yes
+    # Added from timezone-configmap.yaml
+    - name: timezone-config
+      namespace: fks-development
+      labels:
+        app: timezone-config
+      data:
+        TZ: "America/Toronto"

@@ -1,0 +1,165 @@
+# User interface configuration
+
+# UI general settings
+ui:
+  # Supported trading symbols
+  supported_symbols:
+    - "BTCUSD"
+    - "XAUUSD"  # Gold
+    - "ETHUSD"
+    - "XAGUSD"  # Silver
+  
+  # Data refresh intervals available to users
+  refresh_intervals:
+    - label: "30 sec"
+      value: 30
+    - label: "1 min"
+      value: 60
+    - label: "5 min"
+      value: 300
+    - label: "15 min"
+      value: 900
+    - label: "30 min"
+      value: 1800
+    - label: "1 hour"
+      value: 3600
+  
+  # Theme settings
+  theme: "light"  # light or dark
+  default_chart_timeframe: "1m"
+  
+  # Layout configuration
+  layout:
+    default_view: "dashboard"  # dashboard, grid, single
+    sidebar_collapsed: false
+    top_bar: true
+    footer: true
+    max_widgets_per_view: 9
+    save_layout_on_exit: true
+    
+  # Color schemes
+  colors:
+    light_theme:
+      primary: "#3498db"
+      secondary: "#2ecc71"
+      background: "#f8f9fa"
+      card_background: "#ffffff"
+      text: "#333333"
+      muted_text: "#7f8c8d"
+      border: "#e0e0e0"
+      success: "#2ecc71"
+      warning: "#f39c12"
+      danger: "#e74c3c"
+      info: "#3498db"
+    
+    dark_theme:
+      primary: "#3498db"
+      secondary: "#2ecc71"
+      background: "#1e1e2f"
+      card_background: "#27293d"
+      text: "#ffffff"
+      muted_text: "#adb5bd"
+      border: "#2d3035"
+      success: "#2ecc71"
+      warning: "#f39c12"
+      danger: "#e74c3c"
+      info: "#3498db"
+  
+  # Widget configuration
+  widgets:
+    available:
+      - "price_chart"
+      - "order_book"
+      - "trade_history"
+      - "portfolio_summary"
+      - "active_orders"
+      - "prediction_gauge"
+      - "market_sentiment"
+      - "news_feed"
+      - "technical_indicators"
+      - "signal_alerts"
+    
+    default_layout:
+      - position: "top_left"
+        widget: "price_chart"
+        size: "large"
+      - position: "top_right"
+        widget: "prediction_gauge"
+        size: "medium"
+      - position: "middle_left"
+        widget: "order_book"
+        size: "medium"
+      - position: "middle_right"
+        widget: "technical_indicators"
+        size: "medium"
+      - position: "bottom"
+        widget: "portfolio_summary"
+        size: "wide"
+  
+  # Notification settings
+  notifications:
+    enable_browser: true
+    enable_sound: true
+    sound_volume: 0.5
+    desktop_notifications: true
+    notification_duration: 5  # seconds
+    
+  # Trading interface settings
+  trading:
+    confirm_orders: true
+    default_order_type: "market"  # market, limit, stop
+    quick_trade_amounts: [100, 500, 1000, 5000]
+    show_order_preview: true
+    leverage_options: [1, 2, 5, 10, 25, 50, 100]
+    default_leverage: 1
+    
+  # User preferences
+  preferences:
+    remember_last_symbol: true
+    auto_refresh: true
+    default_refresh_interval: 60  # seconds
+    date_format: "YYYY-MM-DD"
+    time_format: "24h"  # 12h or 24h
+    number_format:
+      decimal_places: 2
+      thousands_separator: ","
+      decimal_separator: "."
+      
+  # Responsive behavior
+  responsive:
+    breakpoints:
+      mobile: 576
+      tablet: 768
+      desktop: 992
+      widescreen: 1200
+    mobile_layout: "stacked"  # stacked, tabbed
+    hide_on_mobile: ["news_feed", "market_sentiment"]
+    
+  # Internationalization
+  i18n:
+    default_language: "en"
+    available_languages:
+      - code: "en"
+        name: "English"
+      - code: "es"
+        name: "Español"
+      - code: "zh"
+        name: "中文"
+      - code: "ja"
+        name: "日本語"
+      - code: "ru"
+        name: "Русский"
+    
+  # Performance settings
+  performance:
+    max_data_points: 1000  # Maximum data points to display in charts
+    lazy_load_widgets: true
+    throttle_updates: true
+    update_throttle_ms: 100  # Milliseconds between updates
+    
+  # Accessibility
+  accessibility:
+    high_contrast: false
+    large_text: false
+    screen_reader_support: true
+    reduced_motion: false

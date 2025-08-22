@@ -1,0 +1,95 @@
+{
+  "strategy": {
+    "account_size": 150000,
+    "risk_per_trade": 0.01,
+    "max_contracts": 5,
+    "commission": 5,
+    "tick_value": 10,
+    "margin_per_contract": 15000
+  },
+  "signal_thresholds": {
+    "tier_1_premium": 0.85,
+    "tier_2_strong": 0.70,
+    "tier_3_standard": 0.60,
+    "minimum_quality": 0.60
+  },
+  "wave_ratio_thresholds": {
+    "premium": 2.0,
+    "strong": 1.5,
+    "minimum": 1.5
+  },
+  "position_sizing": {
+    "tier_1": {
+      "min_quality": 0.85,
+      "max_quality": 1.0,
+      "normal_size": 4,
+      "strong_size": 5,
+      "max_size": 5
+    },
+    "tier_2": {
+      "min_quality": 0.70,
+      "max_quality": 0.85,
+      "normal_size": 2,
+      "strong_size": 3,
+      "max_size": 3
+    },
+    "tier_3": {
+      "min_quality": 0.60,
+      "max_quality": 0.70,
+      "normal_size": 1,
+      "strong_size": 2,
+      "max_size": 2
+    }
+  },
+  "market_adjustments": {
+    "volatile": 0.5,
+    "ranging": 0.7,
+    "trending": 1.2,
+    "normal": 1.0
+  },
+  "risk_management": {
+    "stop_loss_multiplier": 2.0,
+    "target_multiplier": 3.0,
+    "max_daily_loss": 1500,
+    "max_daily_profit": 3000
+  },
+  "model_config": {
+    "n_components": 2,
+    "poly_degree": 2,
+    "train_window": 252,
+    "std_multiplier": 2.0
+  },
+  "trading_hours": {
+    "morning_session": {
+      "start": 9.5,
+      "end": 11.5
+    },
+    "afternoon_session": {
+      "start": 13.5,
+      "end": 15.5
+    }
+  },
+  "volume_confirmation": {
+    "min_volume_ratio": 1.2
+  },
+  "assets": {
+    "GC=F": {
+      "name": "Gold Futures",
+      "tick_value": 10,
+      "margin_per_contract": 15000,
+      "commission": 5
+    },
+    "NQ=F": {
+      "name": "Nasdaq Futures",
+      "tick_value": 5,
+      "margin_per_contract": 15000,
+      "commission": 5
+    },
+    "CL=F": {
+      "name": "Crude Oil Futures",
+      "tick_value": 10,
+      "margin_per_contract": 8002,
+      "commission": 5
+    }
+  }
+}

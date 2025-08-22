@@ -1,0 +1,183 @@
+# Service Configuration
+service:
+  name: data
+  port: 9001
+  workers: 4
+  event_buffer_size: 131072  # 128K events
+
+# Data Source Collectors
+collectors:
+  polygon:
+    type: polygon
+    enabled: true
+    config:
+      api_key: ${POLYGON_API_KEY}
+      base_url: ${POLYGON_API_URL:https://api.polygon.io}
+      rate_limit: 5  # requests per second
+      symbols: ${EQUITY_SYMBOLS:AAPL,GOOGL,MSFT,SPY}
+      websocket:
+        enabled: true
+        url: wss://socket.polygon.io
+        
+  binance:
+    type: binance
+    enabled: true
+    config:
+      websocket_url: ${BINANCE_WS_URL:wss://stream.binance.com:9443}
+      symbols: ${CRYPTO_SYMBOLS:BTCUSDT,ETHUSDT}
+      channels:
+        - trade
+        - depth
+        - ticker
+        
+  news:
+    type: newsapi
+    enabled: true
+    config:
+      api_key: ${NEWS_API_KEY}
+      categories: [business, finance]
+      keywords:
+        - "stock market"
+        - "earnings"
+        - "federal reserve"
+      refresh_interval: 300  # 5 minutes
+
+# Data Processing Pipeline
+pipeline:
+  etl:
+    batch_size: 1000
+    timeout_ms: 100
+    stages:
+      extract:
+        schema_version: market_data_v1
+      transform:
+        normalizers:
+          - timestamp
+          - price
+          - volume
+        enrichers:
+          - technical_indicators:
+              indicators:
+                - sma_20
+                - rsi_14
+                - bbands_20_2
+        calculators:
+          - spread
+          - volatility
+      load:
+        targets: [ods, cache, publishers]
+
+# Data Quality Filters
+filters:
+  global:
+    - type: symbol_whitelist
+      symbols: ${TRADING_SYMBOLS}
+    - type: price_range
+      min: 0
+      max: 1000000
+    - type: data_quality
+      max_delay_seconds: 60
+      required_fields: [symbol, timestamp, price]
+    - type: duplicate_detection
+      window_seconds: 5
+
+# Storage Configuration
+storage:
+  ods:
+    type: timescaledb
+    connection:
+      host: ${TIMESCALE_HOST:localhost}
+      port: ${TIMESCALE_PORT:5432}
+      database: ${TIMESCALE_DB:trading_ods}
+      user: ${TIMESCALE_USER:postgres}
+      password: ${TIMESCALE_PASSWORD}
+      pool_size: 10
+    tables:
+      market_data:
+        chunk_time_interval: 1h
+        compression:
+          enabled: true
+          after: 24h
+        retention:
+          hot: 7d
+          compressed: 30d
+          archived: 365d
+    indexes:
+      - fields: [symbol, timestamp]
+        type: btree
+      - fields: [timestamp]
+        type: brin
+        
+  cache:
+    type: redis
+    connection:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD}
+    config:
+      ttl: 300  # 5 minutes
+      max_memory: 1gb
+      eviction_policy: allkeys-lru
+
+# Event Publishing
+publishers:
+  internal:
+    type: disruptor
+    buffer_size: 65536
+    wait_strategy: blocking
+    
+  websocket:
+    type: websocket
+    enabled: true
+    port: 9011
+    max_connections: 1000
+    
+  kafka:
+    type: kafka
+    enabled: ${KAFKA_ENABLED:false}
+    config:
+      brokers: ${KAFKA_BROKERS}
+      topic: market-data
+      partition_key: symbol
+      compression: gzip
+      batch_size: 16384
+
+# Monitoring & Observability
+monitoring:
+  metrics:
+    enabled: true
+    port: 9091
+    path: /metrics
+    
+  health:
+    enabled: true
+    port: 9001
+    path: /health
+    check_interval: 30s
+    
+  logging:
+    level: ${LOG_LEVEL:INFO}
+    format: json
+    
+  alerts:
+    data_lag:
+      condition: "data_lag_seconds > 60"
+      severity: critical
+      channels: [slack, email]
+    error_rate:
+      condition: "rate(etl_errors[5m]) > 0.01"
+      severity: warning
+      channels: [slack]
+    memory_usage:
+      condition: "memory_usage_percent > 85"
+      severity: warning
+    connection_failures:
+      condition: "rate(connection_errors[1m]) > 0"
+      severity: critical
+
+# Feature Flags
+features:
+  real_time_processing: ${ENABLE_REALTIME:true}
+  batch_processing: ${ENABLE_BATCH:true}
+  data_validation: ${ENABLE_VALIDATION:true}
+  circuit_breaker: ${ENABLE_CIRCUIT_BREAKER:true}

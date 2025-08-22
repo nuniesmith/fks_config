@@ -1,0 +1,226 @@
+# Kubernetes Services Configuration
+k8s:
+  services:
+    - name: api-service
+      namespace: app
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8080
+          targetPort: 8080
+      selector:
+        app: api-service
+    - name: frontend
+      namespace: app
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 80
+          targetPort: 80
+      selector:
+        app: frontend
+    - name: postgres
+      namespace: database
+      type: ClusterIP
+      ports:
+        - name: postgres
+          port: 5432
+          targetPort: 5432
+      selector:
+        app: postgres
+    # Added from datadog-service.yaml
+    - name: datadog
+      namespace: fks-development
+      labels:
+        app: datadog
+      type: ClusterIP
+      ports:
+        - name: dd-agent
+          protocol: TCP
+          port: 8126
+          targetPort: 8126
+      selector:
+        app: datadog
+    # Added from fks-service.yaml
+    - name: fks-api-service
+      namespace: fks-development
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8080
+          targetPort: 8080
+      selector:
+        app: fks-api
+    - name: fks-app-service
+      namespace: fks-development
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8083
+          targetPort: 8083
+      selector:
+        app: fks-app
+    - name: fks-data-service
+      namespace: fks-development
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8082
+          targetPort: 8082
+      selector:
+        app: fks-data
+    - name: fks-pine-service
+      namespace: fks-development
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8085
+          targetPort: 8085
+      selector:
+        app: fks-pine
+    - name: fks-training-service
+      namespace: fks-development
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8086
+          targetPort: 8086
+      selector:
+        app: fks-training
+    - name: fks-watcher-service
+      namespace: fks-development
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8087
+          targetPort: 8087
+      selector:
+        app: fks-watcher
+    - name: fks-web-service
+      namespace: fks-development
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8084
+          targetPort: 8084
+      selector:
+        app: fks-web
+    - name: fks_worker-service
+      namespace: fks-development
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 8081
+          targetPort: 8081
+      selector:
+        app: fks_worker
+    # Added from grafana-service.yaml
+    - name: grafana
+      namespace: fks-development
+      labels:
+        app: grafana
+      type: ClusterIP
+      ports:
+        - name: http
+          protocol: TCP
+          port: 3000
+          targetPort: 3000
+      selector:
+        app: grafana
+    # Added from kubernetes-dashboard-service.yaml
+    - name: kubernetes-dashboard
+      namespace: fks-development
+      labels:
+        k8s-app: kubernetes-dashboard
+      type: ClusterIP
+      ports:
+        - port: 443
+          targetPort: 8443
+          protocol: TCP
+      selector:
+        k8s-app: kubernetes-dashboard
+    # Added from nginx-ingress-service.yaml
+    - name: nginx-ingress-service
+      namespace: fks-development
+      labels:
+        app: nginx-ingress-service
+      type: NodePort
+      ports:
+        - name: http
+          protocol: TCP
+          port: 80
+          targetPort: 80
+          nodePort: 30080
+        - name: https
+          protocol: TCP
+          port: 443
+          targetPort: 443
+          nodePort: 30443
+      selector:
+        app: nginx-ingress
+    # Added from postgres-exporter-service.yaml
+    - name: postgres-exporter
+      namespace: fks-development
+      labels:
+        app: postgres-exporter
+      type: ClusterIP
+      ports:
+        - name: metrics
+          protocol: TCP
+          port: 9187
+          targetPort: 9187
+      selector:
+        app: postgres-exporter
+    # Added from postgres-service.yaml
+    - name: postgres
+      namespace: fks-development
+      labels:
+        app: postgres
+      type: ClusterIP
+      ports:
+        - name: database
+          protocol: TCP
+          port: 5432
+          targetPort: 5432
+      selector:
+        app: postgres
+    # Added from prometheus-service.yaml
+    - name: prometheus
+      namespace: fks-development
+      labels:
+        app: prometheus
+        component: monitoring
+      type: ClusterIP
+      ports:
+        - name: http
+          protocol: TCP
+          port: 9090
+          targetPort: 9090
+      selector:
+        app: prometheus
+    # Added from redis-exporter-service.yaml
+    - name: redis-exporter
+      namespace: fks-development
+      labels:
+        app: redis-exporter
+      type: ClusterIP
+      ports:
+        - name: metrics
+          protocol: TCP
+          port: 9121
+          targetPort: 9121
+      selector:
+        app: redis-exporter
+    # Added from redis-service.yaml
+    - name: redis
+      namespace: fks-development
+      labels:
+        app: redis
+      type: ClusterIP
+      ports:
+        - name: database
+          protocol: TCP
+          port: 6379
+          targetPort: 6379
+      selector:
+        app: redis

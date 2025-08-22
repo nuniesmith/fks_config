@@ -1,0 +1,88 @@
+# ============================================================
+# FKS Trading Systems - Base Environment Configuration
+# ============================================================
+# Contains shared settings for all environments
+
+# System-wide settings
+system:
+  name: "FKS Trading Systems"
+  version: "1.0.0"
+  description: "Financial trading framework with multi-service architecture"
+  timezone: "America/Toronto"
+
+# Default log levels
+logging:
+  format: "json"
+  file_rotation: true
+  max_file_size: 100 # MB
+  backup_count: 10
+  include_timestamp: true
+  include_logger_name: true
+
+# Database connections - shared defaults
+databases:
+  postgres:
+    port: 5432
+    database: "financial_data"
+    user: "postgres"
+    pool_size: 20
+    max_overflow: 10
+    connect_timeout: 30
+
+  redis:
+    port: 6379
+    db: 0
+    ssl: false
+
+# Services discovery - defaults
+services:
+  api:
+    port: 8000
+  worker:
+    port: 8001
+  app:
+    port: 9000
+  data:
+    port: 9001
+  web:
+    port: 9999
+  training:
+    port: 8088
+
+# Default trading settings
+trading:
+  symbols:
+    - "BTCUSDT"
+    - "ETHUSDT"
+    - "SOLUSDT"
+    - "AAPL"
+    - "MSFT"
+    - "GOOGL"
+  timeframes:
+    - "1m"
+    - "5m"
+    - "15m"
+    - "1h"
+    - "4h"
+    - "1d"
+
+# ML defaults
+ml:
+  gpu_enabled: true
+  seed: 42
+
+# API clients - shared configuration
+api_clients:
+  client_priority:
+    BTC: ["bitstamp", "kaggle", "polygon"]
+    ETH: ["bitstamp", "polygon"]
+    AAPL: ["polygon", "alpha_vantage"]
+    default: ["bitstamp", "polygon", "kaggle", "alpha_vantage"]
+
+# Feature flags - base defaults
+feature_flags:
+  enable_backtesting: true
+  enable_notifications: false
+  enable_advanced_metrics: true
+  enable_real_data: true
+  enable_auto_updates: true

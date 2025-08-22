@@ -1,0 +1,8 @@
+# Kubernetes Ingress Classes Configuration
+k8s:
+  classes:
+    - name: nginx
+      controller: nginx.org/ingress-controller
+    # Added from nginx-ingress-class.yaml
+    - name: nginx-ingress-class
+      controller: nginx.org/ingress-controller

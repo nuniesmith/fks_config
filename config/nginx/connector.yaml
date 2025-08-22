@@ -1,0 +1,80 @@
+# ============================================================
+# Node Connector Configuration
+# ============================================================
+
+# Service configuration
+service:
+  name: "node-connector"
+  type: "connector"
+  port: 7100
+  host: "0.0.0.0"
+  log_level: ${APP_LOG_LEVEL:-INFO}
+  environment: ${APP_ENV:-development}
+
+# Connection to Registry
+registry:
+  url: "http://node_registry:7000"
+  discovery_interval: 30000  # ms
+  ping_interval: 10000      # ms
+  reconnect_attempts: 5
+  reconnect_delay: 5000     # ms
+
+# Network security
+security:
+  auth_enabled: false
+  encryption_enabled: false
+  tls_enabled: false
+  # TLS configuration (when enabled)
+  tls:
+    cert_file: "/app/config/certs/connector.crt"
+    key_file: "/app/config/certs/connector.key"
+    ca_file: "/app/config/certs/ca.crt"
+
+# Performance tuning
+performance:
+  max_connections: 100
+  timeout: 30000            # ms
+  message_buffer_size: 1024 # KB
+  workers: 4
+
+# Health check configuration
+health_check:
+  enabled: true
+  endpoint: "/health"
+  interval: 30000           # ms
+  timeout: 5000             # ms
+
+# Data processing
+data_processing:
+  batch_size: 100
+  max_queue_size: 1000
+  worker_threads: 2
+
+# Storage settings
+storage:
+  data_dir: "/app/data/cache/node-connector"
+  persist_state: true
+  state_file: "connector-state.json"
+  log_dir: "/app/logs"
+
+# API settings
+api:
+  enabled: true
+  endpoints:
+    - "/api/nodes"
+    - "/api/status"
+    - "/api/metrics"
+  documentation_url: "/docs"
+  swagger_enabled: true
+
+# Metrics and monitoring
+metrics:
+  enabled: true
+  prometheus_endpoint: "/metrics"
+  collect_interval: 15000   # ms
+
+# Extensions and plugins
+plugins:
+  enabled: false
+  directory: "/app/plugins"
+  autoload: false

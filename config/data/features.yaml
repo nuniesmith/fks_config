@@ -1,0 +1,26 @@
+# Feature engineering configuration
+
+# Technical indicators configuration
+technical_indicators:
+  sma_5_window: 5
+  sma_20_window: 20
+  rsi_window: 14
+  bb_window: 20
+  bb_std: 2
+  macd_fast: 12
+  macd_slow: 26
+  macd_signal: 9
+  volatility_window: 10
+  volume_ma_window: 5
+
+# Feature engineering settings
+feature_engineering:
+  future_movement_hours: 3
+  window_sizes:
+    short: 5
+    medium: 20
+    long: 50
+  target_classifications:
+    up: 1
+    down: -1
+    neutral: 0

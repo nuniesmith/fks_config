@@ -1,0 +1,31 @@
+# Common model configuration
+
+# Model parameters
+models:
+  default_model: "bayesian"
+  valid_types:
+    - bayesian
+    - gaussian
+    - polynomial
+    - random_forest
+    - xgboost
+  asset_model_mapping:
+    gold: "bayesian"
+    bitcoin: "xgboost"
+
+# Hyperparameter tuning
+hyperparameter_tuning:
+  enabled: false
+  cv_folds: 5
+  scoring: "neg_mean_squared_error"
+  random_iterations: 20
+  search_spaces:
+    bayesian:
+      alpha_1: [1.0e-7, 1.0e-5]
+      alpha_2: [1.0e-7, 1.0e-5]
+    gaussian:
+      mu_prior_std: [10, 100]
+      sigma_prior_beta: [0.05, 1.0]
+    random_forest:
+      max_depth: [5, 7, 10, 15, 20]
+      n_estimators: [50, 100, 200]

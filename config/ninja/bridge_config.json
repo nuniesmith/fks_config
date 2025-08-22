@@ -1,0 +1,43 @@
+{
+  "bridge": {
+    "redis_host": "localhost",
+    "redis_port": 6379,
+    "redis_db": 0,
+    "redis_password": null,
+    "zmq_market_port": 5555,
+    "zmq_signals_port": 5556,
+    "host": "0.0.0.0",
+    "port": 8001
+  },
+  "data_processing": {
+    "market_data_buffer_size": 1000,
+    "indicator_calculation": true,
+    "technical_indicators": {
+      "sma_periods": [10, 20, 50],
+      "rsi_period": 14,
+      "bollinger_bands": true,
+      "macd": true
+    }
+  },
+  "websocket": {
+    "max_connections": 50,
+    "heartbeat_interval": 30,
+    "compression": true
+  },
+  "machine_learning": {
+    "model_updates": {
+      "auto_retrain": true,
+      "retrain_interval": 3600,
+      "min_data_points": 100
+    },
+    "prediction_cache": {
+      "enabled": true,
+      "ttl": 300
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file_path": "./logs/python_bridge.log"
+  }
+}

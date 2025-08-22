@@ -1,0 +1,39 @@
+service:
+  name: transformer
+  port: 8089
+  
+nlp_models:
+  sentiment:
+    model: ProsusAI/finbert
+    batch_size: 16
+    max_length: 512
+    
+  news_classification:
+    model: bert-base-uncased
+    categories:
+      - earnings
+      - merger_acquisition
+      - product_launch
+      - regulatory
+      - market_analysis
+      
+news_processing:
+  sources:
+    - name: newsapi
+      api_key: ${NEWS_API_KEY}
+      categories: [business, technology]
+      
+    - name: benzinga
+      api_key: ${BENZINGA_API_KEY}
+      
+  processing:
+    deduplication: true
+    min_relevance_score: 0.7
+    
+market_analysis:
+  context_window: 20
+  features:
+    - market_regime
+    - volatility_regime
+    - correlation_matrix
+    - microstructure

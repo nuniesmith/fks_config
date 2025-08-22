@@ -1,0 +1,16 @@
+# Kubernetes Persistent Volumes Configuration
+k8s:
+  pv:
+    - name: data-pv
+      storageClassName: standard
+      capacity: 10Gi
+      accessModes: ["ReadWriteOnce"]
+      hostPath: /data
+    # Added from fks-app-src-pv.yaml
+    - name: fks-app-src-pv
+      namespace: fks-development
+      capacity: 1Gi
+      accessModes: ["ReadWriteOnce"]
+      hostPath: "fks/src"
+      persistentVolumeReclaimPolicy: Retain
+      storageClassName: ""

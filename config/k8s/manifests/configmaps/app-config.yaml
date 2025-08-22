@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: app
+data:
+  DATABASE_URL: postgresql://user:password@postgres:5432/db
+  LOG_LEVEL: debug
+  ENVIRONMENT: development

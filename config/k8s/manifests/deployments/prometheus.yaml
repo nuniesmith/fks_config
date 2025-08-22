@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: fks-development
+  labels:
+    app: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        env:
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+              name: fks-app-config
+              key: TZ
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: 500m
+          requests:
+            memory: 256Mi
+            cpu: 250m
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+        - name: prometheus-data-pvc
+          mountPath: /prometheus
+        - name: prometheus-logs-pvc
+          mountPath: /var/log/prometheus
+        - name: prometheus-config-pvc
+          mountPath: /etc/prometheus
+      volumes:
+      - name: prometheus-data-pvc
+        persistentVolumeClaim:
+          claimName: prometheus-data-pvc
+      - name: prometheus-logs-pvc
+        persistentVolumeClaim:
+          claimName: prometheus-logs-pvc
+      - name: prometheus-config-pvc
+        configMap:
+          name: prometheus-config-pvc

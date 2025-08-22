@@ -1,0 +1,387 @@
+# =============================================================================
+# FKS Trading Systems - Consolidated Services Configuration
+# =============================================================================
+
+# Global service settings
+global:
+  timeout: 300
+  log_level: "INFO"
+  environment: "development"
+  
+  # Common paths (hardcoded)
+  base_paths:
+    project_root: "/home/${USER}/fks"
+    config_dir: "/home/${USER}/fks/config"
+    data_dir: "/home/${USER}/fks/data"
+    logs_dir: "/home/${USER}/fks/logs"
+    models_dir: "/home/${USER}/fks/models"
+    temp_dir: "/home/${USER}/fks/temp"
+
+# =============================================================================
+# API SERVICE
+# =============================================================================
+api:
+  service:
+    host: "0.0.0.0"
+    port: 8000
+    workers: 4
+    timeout: 60
+    log_level: "INFO"
+  
+  authentication:
+    required: true
+    method: "jwt"
+    jwt:
+      secret_key: "CHANGE_THIS_TO_A_RANDOM_SECRET_KEY"
+      algorithm: "HS256"
+      token_expire_minutes: 1440
+  
+  endpoints:
+    market_data:
+      enabled: true
+      cache_timeout: 30
+      rate_limit: 100
+    trading:
+      enabled: true
+      require_confirmation: true
+      rate_limit: 20
+    account:
+      enabled: true
+      rate_limit: 60
+  
+  health_check:
+    endpoint: "/health"
+    interval: 30
+
+# =============================================================================
+# APP SERVICE (Main Trading Application)
+# =============================================================================
+app:
+  service:
+    host: "0.0.0.0"
+    port: 9000
+    workers: 4
+    timeout: 300
+    log_level: "INFO"
+  
+  # Trading configuration
+  trading:
+    mode: "paper"
+    initial_balance: 10000
+    quote_currency: "USDT"
+    max_open_positions: 5
+    
+  # Model configuration  
+  model:
+    type: "transformer"
+    d_model: 64
+    n_head: 8
+    n_layers: 3
+    dropout: 0.1
+    learning_rate: 0.001
+  
+  # Data configuration
+  data:
+    seq_length: 60
+    batch_size: 32
+    symbols: ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
+    timeframes: ["1h", "4h", "1d"]
+  
+  # Strategy configuration
+  strategies:
+    default: "fks_enhanced"
+    fks_enhanced:
+      enabled: true
+      min_signal_quality: 0.7
+      timeframes: ["1h", "4h"]
+  
+  health_check:
+    endpoint: "/health"
+    interval: 30
+
+# =============================================================================
+# DATA SERVICE
+# =============================================================================
+data:
+  service:
+    host: "0.0.0.0"
+    port: 9001
+    workers: 2
+    timeout: 120
+    log_level: "INFO"
+  
+  # Storage configuration
+  storage:
+    type: "hybrid"
+    postgres:
+      enabled: true
+      host: "postgres"
+      port: 5432
+      database: "financial_data"
+      user: "postgres"
+      password: "123456"
+    redis:
+      enabled: true
+      host: "redis"
+      port: 6379
+      password: "123456"
+      db: 2
+      ttl: 3600
+  
+  # Data sources
+  sources:
+    binance:
+      enabled: true
+      type: "exchange"
+      rate_limit: 1200
+    yahoo_finance:
+      enabled: true
+      type: "api"
+      rate_limit: 2000
+  
+  # Data collection
+  collection:
+    symbols: ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
+    timeframes: ["1m", "5m", "15m", "1h", "4h", "1d"]
+    update_interval: 60
+  
+  health_check:
+    endpoint: "/health"
+    interval: 30
+
+# =============================================================================
+# WEB SERVICE
+# =============================================================================
+web:
+  service:
+    host: "0.0.0.0"
+    port: 9999
+    workers: 4
+    timeout: 60
+    log_level: "INFO"
+  
+  # UI configuration
+  ui_framework:
+    type: "react"
+    dark_mode: true
+    tailwind: true
+  
+  # Pages configuration
+  pages:
+    dashboard:
+      enabled: true
+      default: true
+      refresh_interval: 30
+    charts:
+      enabled: true
+      default_symbol: "GC"
+      default_timeframe: "1h"
+    trading:
+      enabled: true
+      allow_live_trading: false
+  
+  # API connections
+  api:
+    internal_api:
+      url: "http://api:8000"
+      timeout: 30
+    data_service:
+      url: "http://data:9001"
+      timeout: 30
+    app_service:
+      url: "http://app:9000"
+      timeout: 30
+  
+  health_check:
+    endpoint: "/health"
+    interval: 30
+
+# =============================================================================
+# WORKER SERVICE
+# =============================================================================
+worker:
+  service:
+    host: "0.0.0.0"
+    port: 8001
+    workers: 2
+    timeout: 60
+    log_level: "INFO"
+  
+  # Worker pool configuration
+  worker_pool:
+    workers: 2
+    threads_per_worker: 4
+    auto_scale: true
+    min_workers: 1
+    max_workers: 8
+  
+  # Queue configuration
+  queue:
+    broker: "redis"
+    result_backend: "redis"
+    redis:
+      host: "redis"
+      port: 6379
+      password: "123456"
+      db: 1
+  
+  # Task configuration
+  tasks:
+    default_retry_delay: 60
+    max_retries: 3
+    data_processing:
+      priority: "high"
+      timeout: 300
+      rate_limit: "100/m"
+    market_analysis:
+      priority: "normal" 
+      timeout: 180
+      rate_limit: "30/m"
+  
+  health_check:
+    endpoint: "/health"
+    interval: 30
+
+# =============================================================================
+# TRAINING SERVICE (GPU)
+# =============================================================================
+training:
+  service:
+    host: "0.0.0.0"
+    port: 8088
+    workers: 1
+    timeout: 86400
+    log_level: "INFO"
+  
+  # GPU configuration
+  gpu:
+    enabled: true
+    device_ids: [0]
+    memory_limit: 0
+    mixed_precision: true
+  
+  # Data configuration
+  data:
+    source: "internal"
+    internal_service_url: "http://data:9001"
+    symbols: ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
+    timeframes: ["1h", "4h", "1d"]
+    train_split: 0.7
+    validation_split: 0.15
+    test_split: 0.15
+  
+  # Training configuration
+  training:
+    default_model: "lstm"
+    epochs: 50
+    early_stopping: true
+    patience: 10
+    optimizer: "adam"
+    learning_rate: 0.001
+  
+  # Model management
+  model_management:
+    save_models: true
+    models_directory: "/home/${USER}/fks/models"
+    save_format: "tf"
+    versioning: true
+  
+  health_check:
+    endpoint: "/health"
+    interval: 60
+
+# =============================================================================
+# TRANSFORMER SERVICE (GPU)
+# =============================================================================
+transformer:
+  service:
+    host: "0.0.0.0"
+    port: 8089
+    workers: 1
+    timeout: 86400
+    log_level: "INFO"
+  
+  # GPU configuration
+  gpu:
+    enabled: true
+    device_ids: [0]
+    memory_limit: 0
+    mixed_precision: true
+  
+  # Model configuration
+  model:
+    type: "transformer"
+    architecture: "encoder_decoder"
+    d_model: 512
+    n_head: 8
+    num_layers: 6
+    dropout: 0.1
+    max_sequence_length: 1024
+    model_path: "/home/${USER}/fks/models/transformer"
+  
+  # Inference configuration
+  inference:
+    batch_size: 32
+    max_batch_size: 128
+    sequence_length: 512
+    prediction_horizon: 24
+  
+  # Financial data configuration
+  financial_data:
+    time_series:
+      features: ["open", "high", "low", "close", "volume"]
+      target: "close_price_change"
+      sequence_length: 100
+      prediction_length: 1
+    market_data:
+      symbols: ["GC", "NQ", "ES", "CL", "BTC", "ETH"]
+      currencies: ["USD", "EUR"]
+      timeframes: ["1m", "5m", "15m", "1h", "4h", "1d"]
+
+  health_check:
+    endpoint: "/health"
+    interval: 60
+
+# =============================================================================
+# SERVICE GROUPS & DEPENDENCIES
+# =============================================================================
+service_groups:
+  core:
+    services: ["api", "data", "redis", "postgres"]
+    startup_order: ["redis", "postgres", "data", "api"]
+
+  ml:
+    services: ["training", "transformer", "redis", "postgres"]
+    startup_order: ["redis", "postgres", "training", "transformer"]
+  
+  web:
+    services: ["web", "api", "redis", "postgres"]
+    startup_order: ["redis", "postgres", "api", "web"]
+  
+  all:
+    services: ["api", "data", "web", "worker", "training", "transformer", "redis", "postgres"]
+    startup_order: ["redis", "postgres", "data", "api", "worker", "training", "transformer", "web"]
+
+# Service dependencies
+dependencies:
+  api: ["redis", "postgres"]
+  worker: ["redis", "postgres"]
+  data: ["redis", "postgres"]
+  web: ["api", "redis", "postgres"]
+  training: ["data", "redis", "postgres"]
+  transformer: ["data", "redis", "postgres"]
+
+# Health check configuration
+health_checks:
+  enabled: true
+  timeout: 10
+  interval: 30
+  retries: 3
+  endpoints:
+    api: "http://localhost:8000/health"
+    app: "http://localhost:9000/health"
+    data: "http://localhost:9001/health"
+    web: "http://localhost:9999/health"
+    worker: "http://localhost:8001/health"
+    training: "http://localhost:8088/health"
+    transformer: "http://localhost:8089/health"

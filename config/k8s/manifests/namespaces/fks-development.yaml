@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: fks-development
+  labels:
+    name: fks-development
+    environment: development

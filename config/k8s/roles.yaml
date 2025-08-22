@@ -1,0 +1,9 @@
+# Kubernetes Roles Configuration
+k8s:
+  roles:
+    - name: pod-reader
+      namespace: default
+      rules:
+        - apiGroups: [""]
+          resources: ["pods"]
+          verbs: ["get", "watch", "list"]

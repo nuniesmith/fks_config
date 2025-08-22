@@ -1,0 +1,25 @@
+# Kubernetes Namespaces Configuration
+k8s:
+  namespaces:
+    - name: app
+      labels:
+        environment: development
+    - name: monitoring
+      labels:
+        environment: development
+    - name: database
+      labels:
+        environment: development
+    # Added from fks-namespaces.yaml
+    - name: fks-development
+      labels:
+        name: fks-development
+        environment: development
+    - name: fks-staging
+      labels:
+        name: fks-staging
+        environment: staging
+    - name: fks-production
+      labels:
+        name: fks-production
+        environment: production

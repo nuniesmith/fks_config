@@ -1,0 +1,151 @@
+# Docker Builder Configuration
+# Location: ./config/docker/rust_config.yaml
+
+# Global configuration
+global:
+  repository:
+    registry: "docker.io"
+    repo: "nuniesmith/fks"
+    username: "${DOCKER_USERNAME}"
+    # Note: token should be provided via environment variable DOCKER_TOKEN
+
+  defaults:
+    environment: "development"
+    build_type: "cpu"
+    python_version: "3.11"
+    rust_version: "1.86.0"
+    timezone: "America/New_York"
+    retention_days: 7
+
+  paths:
+    common_dockerfile: "./deployment/docker/Dockerfile"
+    entrypoint_path: "./scripts/docker/entrypoint.sh"
+    requirements_path: "./requirements.txt"
+
+  user:
+    name: "appuser"
+    id: 1088
+    group_id: 1088
+
+# Service configurations
+services:
+  base:
+    description: "Base Python image for all services"
+    target: "builder-python"
+    build_args:
+      BUILD_PYTHON: "true"
+      USE_SYSTEM_PACKAGES: "true"
+
+  nginx:
+    description: "NGINX reverse proxy"
+    dockerfile: "./deployment/docker/nginx/Dockerfile"
+    ports:
+      - "80:80"
+      - "443:443"
+    healthcheck: "curl --silent --fail http://localhost:${NGINX_SERVICE_PORT:-80}/health || exit 1"
+    networks:
+      - "frontend_network"
+      - "python_app_network"
+
+  api:
+    description: "API Service"
+    target: "runtime"
+    port: 8000
+    python_module: "main"
+    entrypoint: ["python", "-m", "main", "service", "api"]
+    healthcheck: "curl --fail http://localhost:8000/health || exit 1"
+    extra_runtime_packages: "netcat-openbsd"
+    resource_limits:
+      cpus: 2
+      memory: 4096M
+    networks:
+      - "frontend_network"
+      - "python_app_network"
+
+  worker:
+    description: "Worker Service"
+    target: "runtime"
+    port: 8001
+    python_module: "main"
+    entrypoint: ["python", "-m", "main", "service", "worker"]
+    healthcheck: "curl --fail http://localhost:8001/health || exit 1"
+    resource_limits:
+      cpus: 2
+      memory: 4096M
+    networks:
+      - "python_app_network"
+      - "database_network"
+
+  app:
+    description: "Main Application"
+    target: "runtime"
+    port: 9000
+    python_module: "main"
+    entrypoint: ["python", "-m", "main", "service", "app"]
+    healthcheck: "curl --fail http://localhost:9000/health || exit 1"
+    extra_env:
+      TRADING_MODE: "paper"
+      REDIS_HOST: "redis"
+      POSTGRES_HOST: "postgres"
+    volumes:
+      - "./docs:/app/docs"
+    resource_limits:
+      cpus: 2
+      memory: 4096M
+    networks:
+      - "frontend_network"
+      - "python_app_network"
+      - "database_network"
+    logging:
+      max_size: "10m"
+      max_file: 3
+
+  data:
+    description: "Data Service"
+    target: "runtime"
+    port: 9001
+    python_module: "main"
+    entrypoint: ["python", "-m", "main", "service", "data"]
+    healthcheck: "curl --fail http://localhost:9001/health || exit 1"
+    resource_limits:
+      cpus: 2
+      memory: 4096M
+    networks:
+      - "python_app_network"
+      - "database_network"
+
+  web:
+    description: "Web Interface"
+    target: "runtime"
+    port: 9999
+    python_module: "main"
+    entrypoint: ["python", "-m", "main", "service", "web"]
+    healthcheck: "curl --fail http://localhost:9999/health || exit 1"
+    extra_env:
+      WEB_HOST: "0.0.0.0"
+    resource_limits:
+      cpus: 1
+      memory: 2048M
+    networks:
+      - "frontend_network"
+      - "python_app_network"
+    logging:
+      max_size: "10m"
+      max_file: 3
+
+# Build optimization settings
+optimization:
+  dockerfile:
+    squash: true
+    compress: true
+    buildkit_inline_cache: true
+
+  environment:
+    PIP_NO_CACHE_DIR: 1
+    PIP_DISABLE_PIP_VERSION_CHECK: 1
+    PYTHONDONTWRITEBYTECODE: 1
+    DEBIAN_FRONTEND: "noninteractive"
+
+  parallel_build:
+    max_concurrent: 3
+    timeout_minutes: 30

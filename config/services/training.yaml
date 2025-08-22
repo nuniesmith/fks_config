@@ -1,0 +1,118 @@
+# config/services/training.yaml
+service:
+  name: training
+  port: 8088
+  workers: ${TRAINING_WORKERS:2}
+  
+compute:
+  device: ${TRAINING_DEVICE:auto}  # auto, cpu, cuda
+  mixed_precision: true
+  distributed:
+    enabled: ${DISTRIBUTED_TRAINING:false}
+    backend: nccl
+    
+mlflow:
+  tracking_uri: ${MLFLOW_TRACKING_URI:http://mlflow:5000}
+  experiment_name: fks_trading_models
+  artifact_location: ${MLFLOW_ARTIFACTS:s3://fks-mlflow/artifacts}
+  
+model_registry:
+  backend: mlflow
+  auto_register: true
+  staging_criteria:
+    min_accuracy: 0.6
+    min_sharpe: 1.0
+    max_drawdown: 0.2
+    
+datasets:
+  cache_dir: /data/cache
+  preprocessed_dir: /data/preprocessed
+  
+  sources:
+    - name: market_data
+      type: timeseries
+      path: ${MARKET_DATA_PATH}
+      
+    - name: sentiment_data
+      type: text
+      path: ${SENTIMENT_DATA_PATH}
+      
+pipelines:
+  supervised:
+    default_split: 0.8
+    validation_method: time_series_split
+    n_splits: 5
+    
+  reinforcement:
+    environment: trading_gym
+    episodes: 1000
+    
+hyperparameter_tuning:
+  framework: optuna
+  n_trials: 100
+  timeout: 3600  # 1 hour
+  
+  pruning:
+    enabled: true
+    method: median
+    
+models:
+  xgboost:
+    default_params:
+      n_estimators: 1000
+      max_depth: 6
+      learning_rate: 0.1
+      objective: "multi:softprob"
+      n_jobs: -1
+      
+  lstm:
+    default_params:
+      input_size: 50
+      hidden_size: 256
+      num_layers: 3
+      dropout: 0.2
+      attention_heads: 8
+      
+  transformer:
+    default_params:
+      d_model: 512
+      n_heads: 8
+      n_layers: 6
+      d_ff: 2048
+      dropout: 0.1
+      
+training_jobs:
+  # Scheduled training jobs
+  - name: daily_model_update
+    schedule: "0 2 * * *"  # 2 AM daily
+    pipeline: supervised
+    model_type: xgboost
+    features:
+      - price_features
+      - volume_features
+      - technical_indicators
+      
+  - name: weekly_deep_learning
+    schedule: "0 3 * * 0"  # Sunday 3 AM
+    pipeline: deep_learning
+    model_type: lstm
+    lookback_window: 100
+    
+monitoring:
+  metrics_port: 8098
+  
+  tracked_metrics:
+    - training_loss
+    - validation_loss
+    - learning_rate
+    - gpu_utilization
+    - memory_usage
+    
+  alerts:
+    - name: training_failure
+      condition: "training_job_status == 'failed'"
+      severity: critical
+      
+    - name: low_gpu_utilization
+      condition: "gpu_utilization < 0.5"
+      severity: warning

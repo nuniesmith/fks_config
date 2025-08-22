@@ -1,0 +1,79 @@
+# Kubernetes Persistent Volume Claims Configuration
+k8s:
+  pvcs:
+    - name: postgres-data
+      namespace: database
+      storageClass: standard
+      accessModes: ["ReadWriteOnce"]
+      size: 5Gi
+    - name: prometheus-data
+      namespace: monitoring
+      storageClass: standard
+      accessModes: ["ReadWriteOnce"]
+      size: 5Gi
+    # Added from datadog-pvc.yaml
+    - name: datadog-data
+      namespace: fks-development
+      labels:
+        app: datadog
+      accessModes: ["ReadWriteOnce"]
+      size: 1Gi
+    # Added from fks-pvcs.yaml
+    - name: fks-app-data-pvc
+      namespace: fks-development
+      accessModes: ["ReadWriteMany"]
+      storageClass: standard
+      size: 10Gi
+    - name: fks-model-storage-pvc
+      namespace: fks-development
+      accessModes: ["ReadWriteMany"]
+      storageClass: standard
+      size: 20Gi
+    - name: fks_worker-data-pvc
+      namespace: fks-development
+      accessModes: ["ReadWriteMany"]
+      storageClass: standard
+      size: 10Gi
+    # Added from grafana-pvc.yaml
+    - name: grafana-data-pvc
+      namespace: fks-development
+      labels:
+        app: grafana
+      accessModes: ["ReadWriteOnce"]
+      size: 1Gi
+    # Added from postgres-pvc.yaml
+    - name: postgres-data-pvc
+      namespace: fks-development
+      accessModes: ["ReadWriteOnce"]
+      storageClass: standard
+      size: 20Gi
+    - name: postgres-logs-pvc
+      namespace: fks-development
+      accessModes: ["ReadWriteOnce"]
+      storageClass: standard
+      size: 5Gi
+    # Added from prometheus-pvc.yaml
+    - name: prometheus-data-pvc
+      namespace: fks-development
+      labels:
+        app: prometheus
+      accessModes: ["ReadWriteOnce"]
+      size: 1Gi
+    - name: prometheus-logs-pvc
+      namespace: fks-development
+      labels:
+        app: prometheus
+      accessModes: ["ReadWriteOnce"]
+      size: 1Gi
+    - name: prometheus-config-pvc
+      namespace: fks-development
+      labels:
+        app: prometheus
+      accessModes: ["ReadWriteOnce"]
+      size: 1Gi
+    # Added from redis-pvc.yaml
+    - name: redis-data-pvc
+      namespace: fks-development
+      accessModes: ["ReadWriteOnce"]
+      storageClass: standard
+      size: 10Gi

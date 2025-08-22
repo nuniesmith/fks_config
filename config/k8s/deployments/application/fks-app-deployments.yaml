@@ -1,0 +1,356 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fks-api
+  namespace: fks-development
+  labels:
+    app: fks-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fks-api
+  template:
+    metadata:
+      labels:
+        app: fks-api
+    spec:
+      serviceAccountName: fks-api-service-account
+      containers:
+        - name: fks-api
+          image: ${API_IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "main", "service", "api"]
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: fks-api-config
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fks-app
+  namespace: fks-development
+  labels:
+    app: fks-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fks-app
+  template:
+    metadata:
+      labels:
+        app: fks-app
+    spec:
+      serviceAccountName: fks-app-service-account
+      containers:
+        - name: fks-app
+          image: ${APP_IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "main", "service", "app"]
+          ports:
+            - containerPort: 8083
+          envFrom:
+            - configMapRef:
+                name: fks-app-config
+          env:
+            - name: POSTGRES_HOST
+              value: "postgres-service"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: REDIS_HOST
+              value: "redis-service"
+            - name: REDIS_PORT
+              value: "6379"
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8083
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8083
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+            - name: app-docs
+              mountPath: /app/docs
+            - name: app-data
+              mountPath: /app/data
+      volumes:
+        - name: app-docs
+          emptyDir: {}
+        - name: app-data
+          persistentVolumeClaim:
+            claimName: fks-app-data-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fks-data
+  namespace: fks-development
+  labels:
+    app: fks-data
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fks-data
+  template:
+    metadata:
+      labels:
+        app: fks-data
+    spec:
+      serviceAccountName: fks-data-service-account
+      containers:
+        - name: fks-data
+          image: ${DATA_IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "main", "service", "data"]
+          ports:
+            - containerPort: 8082
+          envFrom:
+            - configMapRef:
+                name: fks-data-config
+          env:
+            - name: POSTGRES_HOST
+              value: "postgres-service"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: REDIS_HOST
+              value: "redis-service"
+            - name: REDIS_PORT
+              value: "6379"
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8082
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8082
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fks-pine
+  namespace: fks-development
+  labels:
+    app: fks-pine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fks-pine
+  template:
+    metadata:
+      labels:
+        app: fks-pine
+    spec:
+      serviceAccountName: fks-pine-service-account
+      containers:
+        - name: fks-pine
+          image: ${PINE_IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "main", "service", "pine"]
+          ports:
+            - containerPort: 8085
+          envFrom:
+            - configMapRef:
+                name: fks-pine-config
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8085
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8085
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fks_worker
+  namespace: fks-development
+  labels:
+    app: fks_worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fks_worker
+  template:
+    metadata:
+      labels:
+        app: fks_worker
+    spec:
+      serviceAccountName: fks_worker-service-account
+      containers:
+        - name: fks_worker
+          image: ${WORKER_IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "main", "service", "worker"]
+          ports:
+            - containerPort: 8081
+          envFrom:
+            - configMapRef:
+                name: fks_worker-config
+          env:
+            - name: POSTGRES_HOST
+              value: "postgres-service"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: REDIS_HOST
+              value: "redis-service"
+            - name: REDIS_PORT
+              value: "6379"
+          resources:
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          volumeMounts:
+            - name: worker-data
+              mountPath: /app/data
+      volumes:
+        - name: worker-data
+          persistentVolumeClaim:
+            claimName: fks_worker-data-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fks-web
+  namespace: fks-development
+  labels:
+    app: fks-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fks-web
+  template:
+    metadata:
+      labels:
+        app: fks-web
+    spec:
+      serviceAccountName: fks-web-service-account
+      containers:
+        - name: fks-web
+          image: ${WEB_IMAGE_TAG}
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "main", "service", "web"]
+          ports:
+            - containerPort: 8084
+          envFrom:
+            - configMapRef:
+                name: fks-web-config
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8084
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8084
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3

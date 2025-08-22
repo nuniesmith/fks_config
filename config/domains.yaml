@@ -1,0 +1,132 @@
+# FKS Trading Systems - Domain Configuration
+# This file maps all FKS services to their respective subdomains and ports
+
+domain: fkstrading.xyz
+tailscale_integration: true
+
+# Service Mappings
+services:
+  # Core Application Services
+  app:
+    subdomain: app.fkstrading.xyz
+    port: 3001
+    description: React frontend application
+    service_type: frontend
+    
+  api:
+    subdomain: api.fkstrading.xyz
+    port: 8000
+    description: Main API server
+    service_type: api
+    
+  data:
+    subdomain: data.fkstrading.xyz
+    port: 9001
+    description: Real-time data stream service
+    service_type: streaming
+    
+  # Development & Tools
+  code:
+    subdomain: code.fkstrading.xyz
+    port: 8081
+    description: VS Code server
+    service_type: development
+    
+  monitor:
+    subdomain: monitor.fkstrading.xyz
+    port: 3000
+    description: System monitoring dashboard
+    service_type: monitoring
+    
+  # Database Services
+  db:
+    subdomain: db.fkstrading.xyz
+    port: 5432
+    description: PostgreSQL database
+    service_type: database
+    internal_only: true
+    
+  cache:
+    subdomain: cache.fkstrading.xyz
+    port: 6379
+    description: Redis cache
+    service_type: cache
+    internal_only: true
+    
+  # Trading Platform Integration
+  ninja:
+    subdomain: ninja.fkstrading.xyz
+    port: 7496
+    description: NinjaTrader connection service
+    service_type: trading
+    
+  # Worker Services
+  worker:
+    subdomain: worker.fkstrading.xyz
+    port: 8001
+    description: Background worker service
+    service_type: worker
+    
+  # AI/ML Services
+  training:
+    subdomain: training.fkstrading.xyz
+    port: 8088
+    description: AI model training service
+    service_type: ml
+    
+  transformer:
+    subdomain: transformer.fkstrading.xyz
+    port: 8089
+    description: Data transformation service
+    service_type: ml
+    
+  # Monitoring & Analytics
+  grafana:
+    subdomain: grafana.fkstrading.xyz
+    port: 3001
+    description: Grafana metrics dashboard
+    service_type: monitoring
+    
+  prometheus:
+    subdomain: prometheus.fkstrading.xyz
+    port: 9090
+    description: Prometheus metrics collection
+    service_type: monitoring
+    
+  # Network Services
+  nodes:
+    subdomain: nodes.fkstrading.xyz
+    port: 8080
+    description: Node network coordination
+    service_type: network
+
+# Environment-specific overrides
+environments:
+  development:
+    use_localhost: false
+    ssl_enabled: true
+    
+  production:
+    use_localhost: false
+    ssl_enabled: true
+    require_auth: true
+    
+  testing:
+    use_localhost: true
+    ssl_enabled: false
+
+# DNS Configuration
+dns:
+  provider: cloudflare
+  ttl: 300
+  proxy_enabled: false  # Use DNS only for Tailscale IPs
+  
+# Security Settings
+security:
+  require_https: true
+  hsts_enabled: true
+  cors_enabled: true
+  allowed_origins:
+    - "https://app.fkstrading.xyz"
+    - "https://monitor.fkstrading.xyz"
+    - "https://code.fkstrading.xyz"

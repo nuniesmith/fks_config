@@ -1,0 +1,730 @@
+# =================================================================
+# === FKS Trading Systems - Requirements Configuration ========== 
+# =================================================================
+#
+# This file controls which packages from requirements.txt are included
+# in each service's specific requirements file.
+#
+# Location: ./config/python/requirements.yaml
+# Generated service requirements: ./deployment/requirements/
+# Master requirements: ./requirements.txt
+#
+# Regenerate with: ./run.sh --generate-requirements
+# Full update with: ./run.sh --update
+# =================================================================
+
+# Global configuration
+config:
+  source_file: "requirements.txt"
+  output_directory: "./deployment/requirements"
+  backup_directory: "./deployment/requirements/backups"
+  generate_summary: true
+  validate_packages: true
+  create_main_requirements: true
+  
+  # Build optimization settings
+  optimization:
+    enable_docker_cache: true
+    parallel_builds: true
+    layer_caching: true
+    multi_stage_builds: true
+    
+  # GitHub Actions integration
+  github_actions:
+    enable_matrix_builds: true
+    cache_requirements: true
+    parallel_service_builds: true
+    security_scanning: true
+
+# Service definitions
+services:
+  
+  # ===================================================================
+  # API Service - REST API with database connectivity
+  # ===================================================================
+  api:
+    description: "REST API service with database connectivity and trading endpoints"
+    dockerfile: "deployment/docker/Dockerfile"
+    service_type: "api"
+    port: 8000
+    config_file: "./config/services/api.yaml"
+    base_image: "python-base"
+    
+    dependencies:
+      include_sections:
+        - "CORE DEPENDENCIES"
+        - "FINANCIAL & TRADING SPECIFIC"
+        - "INFRASTRUCTURE & DEPLOYMENT"
+        - "DATA PROCESSING & ANALYSIS"
+      
+      include_packages:
+        # Web framework essentials
+        - "fastapi"
+        - "uvicorn"
+        - "starlette"
+        - "pydantic"
+        
+        # Database connectivity
+        - "sqlalchemy"
+        - "redis"
+        - "psycopg2-binary"
+        
+        # API-specific data processing
+        - "pandas"
+        - "numpy"
+        - "openpyxl"
+        - "pyarrow"
+        
+        # Basic visualization for API responses
+        - "matplotlib"
+        - "plotly"
+        
+        # Security and validation
+        - "python-jose"
+        - "passlib"
+        - "python-multipart"
+        
+      exclude_packages:
+        # Heavy ML packages not needed for API
+        - "transformers"
+        - "datasets"
+        - "accelerate"
+        - "tensorboard"
+        - "wandb"
+        - "mlflow"
+        
+        # Development tools
+        - "jupyter"
+        - "notebook"
+        - "jupyterlab"
+        
+        # GPU-specific packages
+        - "nvidia-ml-py"
+        - "gpustat"
+
+  # ===================================================================
+  # App Service - Main trading application
+  # ===================================================================
+  app:
+    description: "Main trading application with ML capabilities and strategy execution"
+    dockerfile: "deployment/docker/Dockerfile"
+    service_type: "app"
+    port: 9000
+    config_file: "./config/services/app.yaml"
+    base_image: "python-base"
+    
+    dependencies:
+      include_sections:
+        - "CORE DEPENDENCIES"
+        - "FINANCIAL & TRADING SPECIFIC"
+        - "MACHINE LEARNING & AI"
+        - "DATA PROCESSING & ANALYSIS"
+        - "VISUALIZATION & PLOTTING"
+        - "PERFORMANCE & OPTIMIZATION"
+        - "INFRASTRUCTURE & DEPLOYMENT"
+      
+      include_packages:
+        # Core trading functionality
+        - "yfinance"
+        - "ta"
+        - "pandas-market-calendars"
+        - "quantlib"
+        
+        # Database and caching
+        - "sqlalchemy"
+        - "redis"
+        - "pymongo"
+        
+        # ML for trading strategies
+        - "scikit-learn"
+        - "prophet"
+        - "pmdarima"
+        - "darts"
+        
+        # Performance optimization
+        - "numba"
+        - "psutil"
+        
+      exclude_packages:
+        # Development-only packages
+        - "jupyter"
+        - "notebook"
+        - "jupyterlab"
+        - "pytest"
+        - "black"
+        - "flake8"
+        
+        # Heavy transformer models (use transformer service instead)
+        - "transformers"
+        - "datasets"
+
+  # ===================================================================
+  # Data Service - Data processing and ingestion
+  # ===================================================================
+  data:
+    description: "Data processing, ingestion, and storage service"
+    dockerfile: "deployment/docker/Dockerfile"
+    service_type: "data"
+    port: 9001
+    config_file: "./config/services/data.yaml"
+    base_image: "python-base"
+    
+    dependencies:
+      include_sections:
+        - "CORE DEPENDENCIES"
+        - "FINANCIAL & TRADING SPECIFIC"
+        - "DATA PROCESSING & ANALYSIS"
+        - "PERFORMANCE & OPTIMIZATION"
+      
+      include_packages:
+        # Core data processing
+        - "pandas"
+        - "numpy"
+        - "scipy"
+        
+        # Financial data sources
+        - "yfinance"
+        - "alpha-vantage"
+        - "polygon-api-client"
+        
+        # Database connectivity
+        - "sqlalchemy"
+        - "redis"
+        - "pymongo"
+        - "psycopg2-binary"
+        
+        # Data formats and I/O
+        - "openpyxl"
+        - "h5py"
+        - "pyarrow"
+        - "feather-format"
+        
+        # Performance for large datasets
+        - "ray"
+        - "dask"
+        - "numba"
+        - "psutil"
+        
+        # Basic API for data service
+        - "fastapi"
+        - "uvicorn"
+        
+      exclude_packages:
+        # Visualization not needed for data service
+        - "matplotlib"
+        - "seaborn"
+        - "plotly"
+        - "bokeh"
+        
+        # ML training packages
+        - "transformers"
+        - "datasets"
+        - "tensorboard"
+        - "wandb"
+        
+        # Development tools
+        - "jupyter"
+        - "notebook"
+
+  # ===================================================================
+  # Worker Service - Background task processing
+  # ===================================================================
+  worker:
+    description: "Background task processing and job queue management"
+    dockerfile: "deployment/docker/Dockerfile"
+    service_type: "worker"
+    port: 8001
+    config_file: "./config/services/worker.yaml"
+    base_image: "python-base"
+    
+    dependencies:
+      include_sections:
+        - "CORE DEPENDENCIES"
+        - "FINANCIAL & TRADING SPECIFIC"
+        - "PERFORMANCE & OPTIMIZATION"
+      
+      include_packages:
+        # Task queue and background processing
+        - "celery"
+        - "redis"
+        - "kombu"
+        
+        # Database for task results
+        - "sqlalchemy"
+        - "psycopg2-binary"
+        
+        # Core data processing for tasks
+        - "pandas"
+        - "numpy"
+        - "requests"
+        
+        # Financial data for background tasks
+        - "yfinance"
+        - "ta"
+        
+        # Performance monitoring
+        - "psutil"
+        
+        # Basic I/O for data tasks
+        - "openpyxl"
+        - "h5py"
+        - "pyarrow"
+        
+      exclude_packages:
+        # Heavy packages not needed for worker
+        - "transformers"
+        - "datasets"
+        - "matplotlib"
+        - "seaborn"
+        - "plotly"
+        - "jupyter"
+        - "notebook"
+        - "tensorboard"
+        - "wandb"
+        - "ray"
+        - "dask"
+
+  # ===================================================================
+  # Web Service - Web interface and dashboards
+  # ===================================================================
+  web:
+    description: "Web frontend, dashboards, and visualization interface"
+    dockerfile: "deployment/docker/Dockerfile"
+    service_type: "web"
+    port: 9999
+    config_file: "./config/services/web.yaml"
+    base_image: "web-base"
+    
+    dependencies:
+      include_sections:
+        - "CORE DEPENDENCIES"
+        - "VISUALIZATION & PLOTTING"
+        - "INFRASTRUCTURE & DEPLOYMENT"
+      
+      include_packages:
+        # Web frameworks and templating
+        - "fastapi"
+        - "starlette" 
+        - "uvicorn"
+        - "flask"
+        - "jinja2"
+        - "aiofiles"
+        
+        # Interactive visualization
+        - "matplotlib"
+        - "seaborn"
+        - "plotly"
+        - "bokeh"
+        
+        # Basic financial data for charts
+        - "yfinance"
+        - "pandas-market-calendars"
+        - "pandas"
+        - "numpy"
+        
+        # Data processing for visualization
+        - "openpyxl"
+        - "h5py"
+        - "pyarrow"
+        
+        # Jupyter integration for interactive dashboards
+        - "jupyter"
+        - "ipykernel"
+        - "ipywidgets"
+        - "voila"
+        
+        # WebSocket support for real-time updates
+        - "websockets"
+        - "python-socketio"
+        
+      exclude_packages:
+        # Heavy ML packages not needed for web
+        - "transformers"
+        - "datasets"
+        - "accelerate"
+        - "tensorboard"
+        - "wandb"
+        - "ray"
+        - "dask"
+        - "numba"
+
+  # ===================================================================
+  # Training Service - ML model training (GPU-enabled)
+  # ===================================================================
+  training:
+    description: "Machine learning model training service with GPU support"
+    dockerfile: "deployment/docker/Dockerfile"
+    service_type: "training"
+    port: 8088
+    config_file: "./config/services/training.yaml"
+    base_image: "ml-base"
+    
+    dependencies:
+      include_sections:
+        - "CORE DEPENDENCIES"
+        - "FINANCIAL & TRADING SPECIFIC"
+        - "MACHINE LEARNING & AI"
+        - "PERFORMANCE & OPTIMIZATION"
+        - "GPU & HARDWARE MONITORING"
+        - "DATA PROCESSING & ANALYSIS"
+      
+      include_packages:
+        # ML training essentials
+        - "scikit-learn"
+        - "torch"
+        - "torchvision"
+        - "torchaudio"
+        
+        # Time series ML
+        - "prophet"
+        - "pmdarima"
+        - "darts"
+        - "pytorch_forecasting"
+        
+        # Modern time series alternatives
+        - "statsforecast"
+        - "neuralforecast"
+        - "mlforecast"
+        
+        # Experiment tracking
+        - "tensorboard"
+        - "wandb"
+        - "mlflow"
+        
+        # Model optimization
+        - "optuna"
+        - "hyperopt"
+        - "ray"
+        
+        # Financial data and features
+        - "yfinance"
+        - "ta"
+        - "pandas-market-calendars"
+        - "quantlib"
+        
+        # GPU monitoring
+        - "gpustat"
+        - "nvidia-ml-py"
+        - "pynvml"
+        
+        # Data storage
+        - "sqlalchemy"
+        - "redis"
+        - "h5py"
+        - "pyarrow"
+        
+        # Training visualization
+        - "matplotlib"
+        - "seaborn"
+        - "plotly"
+        
+      exclude_packages:
+        # Web framework not needed for training
+        - "fastapi"
+        - "starlette"
+        - "uvicorn"
+        - "flask"
+        
+        # Development tools
+        - "jupyter"
+        - "notebook"
+        - "jupyterlab"
+
+  # ===================================================================
+  # Transformer Service - NLP and transformer models
+  # ===================================================================
+  transformer:
+    description: "Transformer model inference service for NLP and sentiment analysis"
+    dockerfile: "deployment/docker/Dockerfile"
+    service_type: "transformer"
+    port: 8089
+    config_file: "./config/services/transformer.yaml"
+    base_image: "ml-base"
+    
+    dependencies:
+      include_sections:
+        - "CORE DEPENDENCIES"
+        - "PERFORMANCE & OPTIMIZATION"
+        - "GPU & HARDWARE MONITORING"
+      
+      include_packages:
+        # Transformer ecosystem
+        - "transformers"
+        - "datasets"
+        - "accelerate"
+        - "tokenizers"
+        
+        # PyTorch for model inference
+        - "torch"
+        - "torchvision"
+        - "torchaudio"
+        
+        # Core financial analysis
+        - "yfinance"
+        - "ta"
+        - "pandas-market-calendars"
+        - "pandas"
+        - "numpy"
+        
+        # Time series modeling
+        - "prophet"
+        - "pmdarima"
+        - "darts"
+        
+        # NLP and sentiment analysis
+        - "vaderSentiment"
+        - "textblob"
+        - "nltk"
+        - "spacy"
+        
+        # API framework for model serving
+        - "fastapi"
+        - "uvicorn"
+        - "pydantic"
+        
+        # Caching and performance
+        - "redis"
+        - "diskcache"
+        
+        # Monitoring and logging
+        - "tensorboard"
+        - "wandb"
+        
+        # GPU management
+        - "gpustat"
+        - "nvidia-ml-py"
+        - "pynvml"
+        
+      exclude_packages:
+        # Development tools
+        - "jupyter"
+        - "notebook"
+        - "pytest"
+        - "black"
+        - "flake8"
+        
+        # Heavy data processing (use data service)
+        - "ray"
+        - "dask"
+
+# ===================================================================
+# Build Optimization Configuration
+# ===================================================================
+build_optimization:
+  
+  # Docker layer optimization
+  docker_layers:
+    # Base layer packages (cached across services)
+    base_packages:
+      - "numpy"
+      - "pandas"
+      - "pydantic"
+      - "PyYAML"
+      - "requests"
+      - "urllib3"
+    
+    # ML layer packages (shared by ML services)
+    ml_packages:
+      - "scikit-learn"
+      - "scipy"
+      - "matplotlib"
+      - "torch"
+    
+    # Web layer packages (shared by web services)
+    web_packages:
+      - "fastapi"
+      - "uvicorn"
+      - "starlette"
+      - "jinja2"
+  
+  # Service grouping for parallel builds
+  service_groups:
+    cpu_services:
+      - "api"
+      - "worker"
+      - "app"
+      - "data"
+    
+    gpu_services:
+      - "training"
+      - "transformer"
+    
+    web_services:
+      - "web"
+  
+  # Cache configuration
+  cache_config:
+    pip_cache_size: "1GB"
+    docker_cache_size: "5GB"
+    buildx_cache_type: "gha"
+    layer_cache_ttl: "7d"
+
+# ===================================================================
+# Environment-specific configurations
+# ===================================================================
+environments:
+  
+  development:
+    additional_packages:
+      - "jupyter"
+      - "notebook"
+      - "jupyterlab"
+      - "pytest"
+      - "pytest-cov"
+      - "black"
+      - "flake8"
+      - "mypy"
+    
+    service_overrides:
+      web:
+        include_packages:
+          - "jupyter"
+          - "notebook"
+          - "ipywidgets"
+      
+      app:
+        include_packages:
+          - "pytest"
+          - "pytest-mock"
+  
+  production:
+    exclude_packages:
+      - "jupyter"
+      - "notebook"
+      - "jupyterlab"
+      - "pytest"
+      - "pytest-cov"
+      - "black"
+      - "flake8"
+      - "mypy"
+    
+    additional_packages:
+      - "gunicorn"
+      - "supervisor"
+      - "sentry-sdk"
+    
+    security_packages:
+      - "cryptography"
+      - "python-jose"
+      - "passlib"
+  
+  testing:
+    additional_packages:
+      - "pytest"
+      - "pytest-cov"
+      - "pytest-mock"
+      - "pytest-asyncio"
+      - "httpx"
+      - "factory-boy"
+
+# ===================================================================
+# Package categories for reference
+# ===================================================================
+package_categories:
+  
+  critical_core:
+    description: "Essential packages required by all services"
+    packages:
+      - "numpy"
+      - "pandas"
+      - "pydantic"
+      - "PyYAML"
+      - "python-dotenv"
+      - "loguru"
+  
+  financial_core:
+    description: "Core financial and trading packages"
+    packages:
+      - "yfinance"
+      - "ta"
+      - "pandas-market-calendars"
+      - "quantlib"
+  
+  ml_core:
+    description: "Core machine learning packages"
+    packages:
+      - "scikit-learn"
+      - "scipy"
+      - "statsmodels"
+  
+  web_core:
+    description: "Core web framework packages"
+    packages:
+      - "fastapi"
+      - "uvicorn"
+      - "starlette"
+  
+  data_core:
+    description: "Core data processing packages"
+    packages:
+      - "openpyxl"
+      - "h5py"
+      - "pyarrow"
+  
+  viz_core:
+    description: "Core visualization packages"
+    packages:
+      - "matplotlib"
+      - "plotly"
+      - "seaborn"
+
+# ===================================================================
+# Validation rules
+# ===================================================================
+validation:
+  
+  # Required packages that must be in master requirements
+  required_packages:
+    - "numpy"
+    - "pandas"
+    - "pydantic"
+    - "PyYAML"
+    - "fastapi"
+  
+  # Packages that should be excluded from certain service types
+  exclusion_rules:
+    api:
+      - "jupyter"
+      - "notebook"
+      - "transformers"
+    
+    worker:
+      - "matplotlib"
+      - "plotly"
+      - "jupyter"
+    
+    data:
+      - "matplotlib"
+      - "seaborn"
+      - "jupyter"
+  
+  # Maximum package count per service (for optimization)
+  max_packages_per_service: 100
+  
+  # Minimum package count per service (sanity check)
+  min_packages_per_service: 5
+
+# ===================================================================
+# Integration settings
+# ===================================================================
+integration:
+  
+  # GitHub Actions configuration
+  github_actions:
+    enable_parallel_builds: true
+    enable_cache_optimization: true
+    enable_security_scanning: true
+    max_parallel_jobs: 3
+  
+  # Docker configuration
+  docker:
+    enable_multi_stage_builds: true
+    enable_buildx: true
+    enable_layer_caching: true
+    registry: "ghcr.io"
+  
+  # Local development
+  local_dev:
+    auto_generate_on_config_change: true
+    validate_on_generation: true
+    create_dev_overrides: true

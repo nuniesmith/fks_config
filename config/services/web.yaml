@@ -1,0 +1,49 @@
+# config/services/web.yaml
+service:
+  name: web
+  port: ${WEB_PORT:9999}
+  host: ${WEB_HOST:0.0.0.0}
+  
+auth:
+  enabled: true
+  provider: jwt
+  secret: ${JWT_SECRET}
+  
+ui:
+  theme: dark
+  refresh_interval: 1000  # ms
+  
+  charts:
+    default_height: 400
+    color_scheme: plotly_dark
+    
+pages:
+  - name: dashboard
+    path: /
+    auth_required: true
+    
+  - name: trading
+    path: /trading
+    auth_required: true
+    
+  - name: analytics
+    path: /analytics
+    auth_required: true
+    
+  - name: settings
+    path: /settings
+    auth_required: true
+    admin_only: true
+    
+realtime:
+  channels:
+    - market_data
+    - positions
+    - orders
+    - alerts
+    - system_status
+    
+  throttle:
+    market_data: 100  # ms
+    positions: 1000   # ms
+    orders: 0         # no throttle

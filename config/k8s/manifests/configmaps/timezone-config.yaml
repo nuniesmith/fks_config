@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: timezone-config
+  namespace: fks-development
+  labels:
+    app: timezone-config
+data:
+  TZ: America/Toronto

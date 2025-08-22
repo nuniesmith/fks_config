@@ -1,0 +1,10 @@
+account:
+  size: 150000
+  risk_per_trade: 0.01
+network:
+  master_port: 8080
+  sim_latency_ms: 100
+runtimes:
+  - python
+  - rust
+vix_gate: 25

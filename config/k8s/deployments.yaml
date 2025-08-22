@@ -1,0 +1,235 @@
+# Kubernetes Deployments Configuration
+k8s:
+  deployments:
+    - name: api-service
+      namespace: app
+      replicas: 2
+      image: myrepo/api-service:${IMAGE_TAG:-latest}
+      containerPort: 8080
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 200m
+          memory: 256Mi
+      env:
+        - name: CONFIG_ENV
+          value: development
+      configMaps:
+        - app-config
+      secrets:
+        - app-secrets
+    - name: frontend
+      namespace: app
+      replicas: 2
+      image: myrepo/frontend:${IMAGE_TAG:-latest}
+      containerPort: 80
+      resources:
+        limits:
+          cpu: 300m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+    # Added from postgres-deployment.yaml
+    - name: postgres
+      namespace: fks-development
+      labels:
+        app: postgres
+      replicas: 1
+      image: postgres:latest
+      containers:
+        - name: postgres
+          env:
+            - name: POSTGRES_DB
+              value: "financial_data"
+            - name: PGDATA
+              value: "/var/lib/postgresql/data"
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: fks-app-config
+                  key: TZ
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-data-pvc
+              mountPath: /var/lib/postgresql/data
+            - name: postgres-logs-pvc
+              mountPath: /var/log/postgres
+      volumes:
+        - name: postgres-data-pvc
+          persistentVolumeClaim:
+            claimName: postgres-data-pvc
+        - name: postgres-logs-pvc
+          persistentVolumeClaim:
+            claimName: postgres-logs-pvc
+      imagePullSecrets:
+        - name: regcred
+    # Added from redis-deployment.yaml
+    - name: redis
+      namespace: fks-development
+      labels:
+        app: redis
+      replicas: 1
+      image: redis:latest
+      containers:
+        - name: redis
+          env:
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: timezone-config
+                  key: TZ
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          ports:
+            - containerPort: 6379
+          volumeMounts:
+            - name: redis-data-pvc
+              mountPath: /app/data
+              readOnly: true
+      volumes:
+        - name: redis-data-pvc
+          persistentVolumeClaim:
+            claimName: redis-data-pvc
+    # Added from fks-infra-deployments.yaml
+    - name: nginx-ingress-deployment
+      namespace: fks-development
+      labels:
+        app: nginx-ingress
+      replicas: 2
+      image: nginx/nginx-ingress:3.1.0
+      containers:
+        - name: nginx-ingress
+          ports:
+            - containerPort: 80
+            - containerPort: 443
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+      serviceAccountName: nginx-ingress-sa
+    # Added from grafana-deployment.yaml
+    - name: grafana
+      namespace: fks-development
+      labels:
+        app: grafana
+      replicas: 1
+      image: grafana/grafana:latest
+      containers:
+        - name: grafana
+          env:
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: timezone-config
+                  key: TZ
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: grafana-data-pvc
+              mountPath: /var/lib/grafana
+            - name: grafana-logs
+              mountPath: /var/log/grafana
+            - name: grafana-config
+              mountPath: /etc/grafana/provisioning
+      volumes:
+        - name: grafana-data-pvc
+          persistentVolumeClaim:
+            claimName: grafana-data-pvc
+        - name: grafana-logs
+          emptyDir: {}
+        - name: grafana-config
+          emptyDir: {}
+    # Added from prometheus-deployment.yaml
+    - name: prometheus
+      namespace: fks-development
+      labels:
+        app: prometheus
+      replicas: 1
+      image: prom/prometheus:latest
+      containers:
+        - name: prometheus
+          env:
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: fks-app-config
+                  key: TZ
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: prometheus-data-pvc
+              mountPath: /prometheus
+            - name: prometheus-logs-pvc
+              mountPath: /var/log/prometheus
+            - name: prometheus-config-pvc
+              mountPath: /etc/prometheus
+      volumes:
+        - name: prometheus-data-pvc
+          persistentVolumeClaim:
+            claimName: prometheus-data-pvc
+        - name: prometheus-logs-pvc
+          persistentVolumeClaim:
+            claimName: prometheus-logs-pvc
+        - name: prometheus-config-pvc
+          configMap:
+            name: prometheus-config-pvc
+      restartPolicy: Always
+    # Added from redis-exporter-deployment.yaml
+    - name: redis-exporter
+      namespace: fks-development
+      labels:
+        app: redis-exporter
+      replicas: 1
+      image: oliver006/redis_exporter:latest
+      containers:
+        - name: redis-exporter
+          env:
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: fks-app-config
+                  key: TZ
+          ports:
+            - containerPort: 9121
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+      imagePullSecrets:
+        - name: regcred

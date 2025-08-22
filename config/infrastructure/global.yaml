@@ -1,0 +1,32 @@
+# Global settings
+
+# Global Configuration
+global:
+  # Application settings
+  app:
+    version: "1.0.0"
+    env: "development"
+    log_level: "INFO"
+    timezone: "America/New_York"
+
+  # Path configuration
+  paths:
+    app_dir: "/app"
+    src_dir: "/app/src"
+    data_dir: "/app/data"
+    models_dir: "/app/models"
+    checkpoints_dir: "/app/checkpoints"
+    output_dir: "/app/outputs"
+    docs_dir: "/app/docs"
+    config_dir: "/app/config"
+    cache_dir: "/app/data/cache"
+    pythonpath: "/app/src"
+    mplconfigdir: "/home/appuser/.matplotlib"
+
+  # Healthcheck settings
+  healthcheck:
+    enable: true
+    interval: "30s"
+    timeout: "10s"
+    retries: 3
+    start_period: "10s"

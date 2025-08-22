@@ -1,0 +1,26 @@
+# Server configuration
+
+# Application settings
+app:
+  model_dir: "models"
+  logging:
+    file: "fks_app.log"
+    level: "INFO"
+    verbose_level: "DEBUG"
+    rotation: "10 MB"
+    retention: "1 month"
+  max_history_entries: 10
+  default_refresh_interval: 60
+  feature_flags:
+    enable_backtesting: true
+    enable_notifications: false
+    enable_advanced_metrics: true
+
+# Server settings
+server:
+  host: "0.0.0.0"
+  port: 9000
+  debug: false
+  workers: 4
+  timeout: 120
+  cors_origins: ["http://localhost:3000"]

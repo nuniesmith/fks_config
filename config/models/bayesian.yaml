@@ -1,0 +1,40 @@
+# Bayesian models configuration
+
+# Bayesian Ridge regression model parameters
+bayesian:
+  alpha_1: 1.0e-6
+  alpha_2: 1.0e-6
+  lambda_1: 1.0e-6
+  lambda_2: 1.0e-6
+  fit_intercept: true
+  normalize: false
+
+# Gaussian Bayesian model parameters
+gaussian:
+  mu_prior_mean: 178
+  mu_prior_std: 20
+  sigma_prior_alpha: 2
+  sigma_prior_beta: 0.1
+  
+  # Asset-specific parameters
+  asset_params:
+    gold:
+      mu_prior_mean: 2000
+      mu_prior_std: 50
+      sigma_prior_alpha: 2
+      sigma_prior_beta: 2.5
+    bitcoin:
+      mu_prior_mean: 40000
+      mu_prior_std: 5000
+      sigma_prior_alpha: 2
+      sigma_prior_beta: 250
+    silver:
+      mu_prior_mean: 25
+      mu_prior_std: 5
+      sigma_prior_alpha: 2
+      sigma_prior_beta: 0.25
+    ethereum:
+      mu_prior_mean: 3000
+      mu_prior_std: 300
+      sigma_prior_alpha: 2
+      sigma_prior_beta: 50

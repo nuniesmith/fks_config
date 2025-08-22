@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fks-app-config
+  namespace: fks-development
+data:
+  APP_LOG_LEVEL: info
+  CONFIG_DIR: /app/config
+  CONFIG_FILE: /app/config/fks/app.yaml
+  PYTHONPATH: /app/src
+  PYTHONUNBUFFERED: '1'
+  SERVICE_RUNTIME: python
+  SERVICE_TYPE: app
+  TZ: America/Toronto
+  KEEP_CONTAINER_ALIVE: 'true'
+  TRADING_MODE: paper

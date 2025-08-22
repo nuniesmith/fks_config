@@ -1,0 +1,418 @@
+# ============================================================
+# FKS Trading Systems - Exchange Configuration
+# ============================================================
+# Configuration for major global exchanges
+# Last updated: 2025-01-17
+
+exchanges:
+  # North American Exchanges
+  nyse:
+    full_name: "New York Stock Exchange"
+    code: "NYSE"
+    region: "us-east"
+    timezone: "America/New_York"
+    currency: "USD"
+    type: "equities"
+    node_id: "nyse1"
+    location:
+      city: "New York"
+      country: "USA"
+      latitude: 40.7128
+      longitude: -74.0060
+    trading_hours:
+      regular:
+        open: "09:30"
+        close: "16:00"
+      pre_market:
+        open: "04:00"
+        close: "09:30"
+      after_hours:
+        open: "16:00"
+        close: "20:00"
+    assets:
+      - US_EQUITIES
+      - ETF
+      - PREFERRED_STOCK
+    latency_target_ms: 5
+    
+  nasdaq:
+    full_name: "NASDAQ Stock Market"
+    code: "NASDAQ"
+    region: "us-east"
+    timezone: "America/New_York"
+    currency: "USD"
+    type: "equities"
+    node_id: "nasdaq1"
+    location:
+      city: "New York"
+      country: "USA"
+      latitude: 40.7128
+      longitude: -74.0060
+    trading_hours:
+      regular:
+        open: "09:30"
+        close: "16:00"
+      pre_market:
+        open: "04:00"
+        close: "09:30"
+      after_hours:
+        open: "16:00"
+        close: "20:00"
+    assets:
+      - US_TECH_EQUITIES
+      - ETF
+      - ADR
+    latency_target_ms: 5
+    
+  cme:
+    full_name: "Chicago Mercantile Exchange"
+    code: "CME"
+    region: "us-central"
+    timezone: "America/Chicago"
+    currency: "USD"
+    type: "derivatives"
+    node_id: "cme1"
+    location:
+      city: "Chicago"
+      country: "USA"
+      latitude: 41.8781
+      longitude: -87.6298
+    trading_hours:
+      futures:
+        open: "17:00"  # Sunday
+        close: "16:00"  # Friday
+      maintenance:
+        daily: "16:00-17:00"
+    assets:
+      - FUTURES
+      - OPTIONS
+      - FX_FUTURES
+      - INTEREST_RATE_FUTURES
+      - EQUITY_INDEX_FUTURES
+    sub_exchanges:
+      - CME
+      - CBOT  # Chicago Board of Trade
+      - NYMEX # New York Mercantile Exchange
+      - COMEX # Commodity Exchange
+    products:
+      - ES  # E-mini S&P 500
+      - NQ  # E-mini Nasdaq 100
+      - YM  # E-mini Dow
+      - RTY # E-mini Russell 2000
+      - GC  # Gold
+      - SI  # Silver
+      - CL  # Crude Oil
+      - NG  # Natural Gas
+      - ZB  # US Treasury Bond
+      - ZN  # 10-Year Note
+      - 6E  # Euro FX
+      - 6J  # Japanese Yen
+    latency_target_ms: 3
+    rithmic_enabled: true
+    
+  cboe:
+    full_name: "Chicago Board Options Exchange"
+    code: "CBOE"
+    region: "us-central"
+    timezone: "America/Chicago"
+    currency: "USD"
+    type: "options"
+    node_id: "cboe1"
+    location:
+      city: "Chicago"
+      country: "USA"
+      latitude: 41.8781
+      longitude: -87.6298
+    trading_hours:
+      regular:
+        open: "08:30"
+        close: "15:15"
+      extended:
+        open: "03:00"
+        close: "16:15"
+    assets:
+      - EQUITY_OPTIONS
+      - INDEX_OPTIONS
+      - ETF_OPTIONS
+      - VIX_PRODUCTS
+    latency_target_ms: 3
+    
+  # European Exchanges
+  lse:
+    full_name: "London Stock Exchange"
+    code: "LSE"
+    region: "uk"
+    timezone: "Europe/London"
+    currency: "GBP"
+    type: "equities"
+    node_id: "lse1"
+    location:
+      city: "London"
+      country: "UK"
+      latitude: 51.5074
+      longitude: -0.1278
+    trading_hours:
+      regular:
+        open: "08:00"
+        close: "16:30"
+      auction:
+        opening: "07:50-08:00"
+        closing: "16:30-16:35"
+    assets:
+      - UK_EQUITIES
+      - INTERNATIONAL_EQUITIES
+      - ETF
+      - BONDS
+      - AIM_SECURITIES
+    latency_target_ms: 5
+    
+  eurex:
+    full_name: "Eurex Exchange"
+    code: "EUREX"
+    region: "de"
+    timezone: "Europe/Berlin"
+    currency: "EUR"
+    type: "derivatives"
+    node_id: "eurex1"
+    location:
+      city: "Frankfurt"
+      country: "Germany"
+      latitude: 50.1109
+      longitude: 8.6821
+    trading_hours:
+      regular:
+        open: "08:00"
+        close: "22:00"
+      pre_trading:
+        open: "07:30"
+        close: "08:00"
+    assets:
+      - EU_FUTURES
+      - EU_OPTIONS
+      - INTEREST_RATE_DERIVATIVES
+      - EQUITY_INDEX_DERIVATIVES
+      - VOLATILITY_DERIVATIVES
+    products:
+      - FDAX  # DAX Futures
+      - FESX  # Euro STOXX 50 Futures
+      - FGBL  # Euro-Bund Futures
+    latency_target_ms: 4
+    
+  euronext:
+    full_name: "Euronext"
+    code: "EURONEXT"
+    region: "eu"
+    timezone: "Europe/Paris"
+    currency: "EUR"
+    type: "equities"
+    node_id: "euronext1"
+    location:
+      city: "Paris"
+      country: "France"
+      latitude: 48.8566
+      longitude: 2.3522
+    markets:
+      - Paris
+      - Amsterdam
+      - Brussels
+      - Dublin
+      - Lisbon
+      - Milan
+      - Oslo
+    trading_hours:
+      regular:
+        open: "09:00"
+        close: "17:30"
+    assets:
+      - EU_EQUITIES
+      - ETF
+      - BONDS
+      - DERIVATIVES
+    latency_target_ms: 5
+    
+  # Asian Exchanges
+  tse:
+    full_name: "Tokyo Stock Exchange"
+    code: "TSE"
+    region: "jp"
+    timezone: "Asia/Tokyo"
+    currency: "JPY"
+    type: "equities"
+    node_id: "tse1"
+    location:
+      city: "Tokyo"
+      country: "Japan"
+      latitude: 35.6762
+      longitude: 139.6503
+    trading_hours:
+      morning:
+        open: "09:00"
+        close: "11:30"
+      afternoon:
+        open: "12:30"
+        close: "15:00"
+    assets:
+      - JP_EQUITIES
+      - J_REIT
+      - ETF
+      - TOPIX_COMPONENTS
+    latency_target_ms: 5
+    
+  hkex:
+    full_name: "Hong Kong Stock Exchange"
+    code: "HKEX"
+    region: "hk"
+    timezone: "Asia/Hong_Kong"
+    currency: "HKD"
+    type: "equities"
+    node_id: "hkex1"
+    location:
+      city: "Hong Kong"
+      country: "Hong Kong"
+      latitude: 22.3193
+      longitude: 114.1694
+    trading_hours:
+      morning:
+        open: "09:30"
+        close: "12:00"
+      afternoon:
+        open: "13:00"
+        close: "16:00"
+    assets:
+      - HK_EQUITIES
+      - CHINA_EQUITIES
+      - ETF
+      - DERIVATIVES
+      - BONDS
+    connect_programs:
+      - Shanghai_Connect
+      - Shenzhen_Connect
+    latency_target_ms: 5
+    
+  sgx:
+    full_name: "Singapore Exchange"
+    code: "SGX"
+    region: "sg"
+    timezone: "Asia/Singapore"
+    currency: "SGD"
+    type: "multi-asset"
+    node_id: "sgx1"
+    location:
+      city: "Singapore"
+      country: "Singapore"
+      latitude: 1.3521
+      longitude: 103.8198
+    trading_hours:
+      regular:
+        open: "09:00"
+        close: "17:00"
+      pre_market:
+        open: "08:30"
+        close: "09:00"
+    assets:
+      - SG_EQUITIES
+      - ASIA_DERIVATIVES
+      - COMMODITIES
+      - FX_FUTURES
+      - REITS
+    latency_target_ms: 4
+    
+  asx:
+    full_name: "Australian Securities Exchange"
+    code: "ASX"
+    region: "au"
+    timezone: "Australia/Sydney"
+    currency: "AUD"
+    type: "equities"
+    node_id: "asx1"
+    location:
+      city: "Sydney"
+      country: "Australia"
+      latitude: -33.8688
+      longitude: 151.2093
+    trading_hours:
+      regular:
+        open: "10:00"
+        close: "16:00"
+      pre_open:
+        open: "07:00"
+        close: "10:00"
+      pre_close:
+        open: "16:00"
+        close: "16:10"
+    assets:
+      - AU_EQUITIES
+      - AU_DERIVATIVES
+      - ETF
+      - REITS
+      - INTEREST_RATE_SECURITIES
+    latency_target_ms: 5
+
+# Exchange Groups and Relationships
+exchange_groups:
+  cme_group:
+    parent: "CME"
+    subsidiaries:
+      - CME
+      - CBOT
+      - NYMEX
+      - COMEX
+    
+  ice_group:
+    parent: "ICE"
+    subsidiaries:
+      - NYSE
+      - ICE_FUTURES_US
+      - ICE_FUTURES_EUROPE
+    
+  euronext_group:
+    parent: "EURONEXT"
+    subsidiaries:
+      - EURONEXT_PARIS
+      - EURONEXT_AMSTERDAM
+      - EURONEXT_BRUSSELS
+      - EURONEXT_DUBLIN
+      - EURONEXT_LISBON
+      - EURONEXT_MILAN
+      - EURONEXT_OSLO
+
+# Network Routing Preferences
+routing_preferences:
+  latency_sensitive:
+    - CME
+    - EUREX
+    - SGX
+    - CBOE
+    
+  volume_priority:
+    - NYSE
+    - NASDAQ
+    - LSE
+    - TSE
+    
+  regional_hubs:
+    americas: ["NYSE", "CME"]
+    europe: ["LSE", "EUREX"]
+    asia_pacific: ["TSE", "SGX", "ASX"]
+
+# Market Data Protocols
+market_data_protocols:
+  fix:
+    - NYSE
+    - NASDAQ
+    - LSE
+    - EUREX
+    
+  sbe:  # Simple Binary Encoding
+    - CME
+    
+  itch:
+    - NASDAQ
+    
+  ouch:
+    - ASX
+    
+  proprietary:
+    - TSE
+    - HKEX
+    - SGX

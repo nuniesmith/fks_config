@@ -1,0 +1,39 @@
+{
+  "log_watcher": {
+    "watch_directories": [
+      "C:/temp/fks_logs/",
+      "/tmp/fks_logs/",
+      "./logs/",
+      "/home/${USER}/code/repos/ninja/logs/"
+    ],
+    "api_url": "http://localhost:8002",
+    "check_interval": 5,
+    "file_patterns": ["*.json", "*.log"],
+    "max_file_size": "100MB",
+    "process_existing_on_startup": true
+  },
+  "endpoints": {
+    "market_data": "/api/ninjatrader/market-data",
+    "trades": "/api/ninjatrader/trades", 
+    "signals": "/api/ninjatrader/signals",
+    "performance": "/api/ninjatrader/performance"
+  },
+  "processing": {
+    "batch_size": 100,
+    "batch_timeout": 10,
+    "retry_attempts": 3,
+    "retry_delay": 5
+  },
+  "monitoring": {
+    "health_check_interval": 60,
+    "metrics_report_interval": 300,
+    "error_threshold": 10
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file_path": "./logs/log_watcher.log",
+    "max_file_size": "10MB",
+    "backup_count": 3
+  }
+}

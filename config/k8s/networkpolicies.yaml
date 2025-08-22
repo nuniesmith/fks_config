@@ -1,0 +1,24 @@
+# Kubernetes Network Policies Configuration
+k8s:
+  networkpolicies:
+    - name: default-deny
+      namespace: app
+      spec:
+        podSelector: {}
+        policyTypes:
+          - Ingress
+          - Egress
+    - name: allow-app-to-db
+      namespace: app
+      spec:
+        podSelector:
+          matchLabels:
+            app: api-service
+        egress:
+          - to:
+              - namespaceSelector:
+                  matchLabels:
+                    name: database
+                podSelector:
+                  matchLabels:
+                    app: postgres

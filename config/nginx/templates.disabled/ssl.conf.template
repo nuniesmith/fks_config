@@ -1,0 +1,18 @@
+# =================================================================
+# ssl.conf.template (SSL-specific configuration)
+# =================================================================
+# Additional SSL configuration when SSL is enabled
+
+# HSTS
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+# OCSP stapling (disabled for self-signed certificates)
+# ssl_stapling on;
+# ssl_stapling_verify on;
+# ssl_trusted_certificate /etc/nginx/ssl/cert.pem;
+
+# Session tickets
+ssl_session_tickets off;
+
+# DH parameters (generate with: openssl dhparam -out dhparam.pem 2048)
+# ssl_dhparam /etc/nginx/ssl/dhparam.pem;

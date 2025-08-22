@@ -1,0 +1,51 @@
+{
+    "monitoring": {
+        "zmq_port": 5555,
+        "log_dir": "./logs",
+        "metrics_interval": 60,
+        "use_redis": false,
+        "use_influxdb": false,
+        "monitor_logs": true,
+        "health_check_interval": 120,
+        "error_threshold": 10
+    },
+    "data_collection": {
+        "buffer_size": 1000,
+        "batch_processing": true,
+        "batch_size": 50,
+        "flush_interval": 30
+    },
+    "performance_tracking": {
+        "calculate_metrics": true,
+        "metrics": [
+            "total_trades",
+            "win_rate", 
+            "profit_factor",
+            "sharpe_ratio",
+            "max_drawdown",
+            "total_pnl"
+        ],
+        "risk_free_rate": 0.02
+    },
+    "integrations": {
+        "redis": {
+            "host": "localhost",
+            "port": 6379,
+            "db": 0,
+            "password": null
+        },
+        "influxdb": {
+            "url": "http://localhost:8086",
+            "token": "",
+            "org": "fks_trading",
+            "bucket": "metrics"
+        }
+    },
+    "logging": {
+        "level": "INFO",
+        "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        "file_path": "./logs/fks_monitor.log",
+        "max_file_size": "10MB",
+        "backup_count": 3
+    }
+}

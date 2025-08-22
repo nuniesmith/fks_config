@@ -1,0 +1,315 @@
+# ============================================================
+# FKS Trading Systems - Market Configuration
+# ============================================================
+
+# Market hours
+market_hours:
+  # Cryptocurrency markets
+  crypto:
+    hours_type: "24/7"
+    timezone: "America/Toronto"
+
+  # US Stock markets
+  us_stocks:
+    hours_type: "regular"
+    timezone: "America/New_York"
+    regular_hours:
+      open: "09:30"
+      close: "16:00"
+    pre_market:
+      enabled: true
+      open: "04:00"
+      close: "09:30"
+    after_hours:
+      enabled: true
+      open: "16:00"
+      close: "20:00"
+    holidays:
+      - "2025-01-01" # New Year's Day
+      - "2025-01-20" # Martin Luther King Jr. Day
+      - "2025-02-17" # Presidents' Day
+      - "2025-04-18" # Good Friday
+      - "2025-05-26" # Memorial Day
+      - "2025-07-04" # Independence Day
+      - "2025-09-01" # Labor Day
+      - "2025-11-27" # Thanksgiving Day
+      - "2025-12-25" # Christmas Day
+
+  # Forex markets
+  forex:
+    hours_type: "weekday"
+    timezone: "America/Toronto"
+    regular_hours:
+      open: "22:00 Sunday"
+      close: "22:00 Friday"
+    holidays:
+      - "2025-01-01" # New Year's Day
+      - "2025-04-18" # Good Friday
+      - "2025-04-21" # Easter Monday
+      - "2025-12-25" # Christmas Day
+      - "2025-12-26" # Boxing Day
+
+# Symbols configuration
+symbols:
+  # Cryptocurrency symbols
+  crypto:
+    - symbol: "BTCUSDT"
+      base_asset: "BTC"
+      quote_asset: "USDT"
+      min_qty: 0.000001
+      max_qty: 100
+      qty_precision: 6
+      price_precision: 2
+      min_notional: 10
+      tick_size: 0.01
+
+    - symbol: "ETHUSDT"
+      base_asset: "ETH"
+      quote_asset: "USDT"
+      min_qty: 0.00001
+      max_qty: 1000
+      qty_precision: 5
+      price_precision: 2
+      min_notional: 10
+      tick_size: 0.01
+
+    - symbol: "SOLUSDT"
+      base_asset: "SOL"
+      quote_asset: "USDT"
+      min_qty: 0.01
+      max_qty: 10000
+      qty_precision: 2
+      price_precision: 3
+      min_notional: 10
+      tick_size: 0.001
+
+  # US Stock symbols
+  us_stocks:
+    - symbol: "AAPL"
+      company: "Apple Inc."
+      sector: "Technology"
+      min_qty: 1
+      qty_precision: 0
+      price_precision: 2
+      tick_size: 0.01
+
+    - symbol: "MSFT"
+      company: "Microsoft Corporation"
+      sector: "Technology"
+      min_qty: 1
+      qty_precision: 0
+      price_precision: 2
+      tick_size: 0.01
+
+    - symbol: "GOOGL"
+      company: "Alphabet Inc."
+      sector: "Technology"
+      min_qty: 1
+      qty_precision: 0
+      price_precision: 2
+      tick_size: 0.01
+
+# Exchanges configuration
+exchanges:
+  # Cryptocurrency exchanges
+  binance:
+    type: "crypto"
+    priority: 1
+    endpoints:
+      rest: "https://api.binance.com"
+      websocket: "wss://stream.binance.com:9443/ws"
+    rate_limits:
+      requests_per_minute: 1200
+      orders_per_minute: 50
+      orders_per_second: 5
+    order_types:
+      - "LIMIT"
+      - "MARKET"
+      - "STOP_LOSS"
+      - "STOP_LOSS_LIMIT"
+      - "TAKE_PROFIT"
+      - "TAKE_PROFIT_LIMIT"
+    timeframes:
+      - "1m"
+      - "3m"
+      - "5m"
+      - "15m"
+      - "30m"
+      - "1h"
+      - "2h"
+      - "4h"
+      - "6h"
+      - "8h"
+      - "12h"
+      - "1d"
+      - "3d"
+      - "1w"
+      - "1M"
+
+  coinbase:
+    type: "crypto"
+    priority: 2
+    endpoints:
+      rest: "https://api.exchange.coinbase.com"
+      websocket: "wss://ws-feed.exchange.coinbase.com"
+    rate_limits:
+      requests_per_minute: 300
+      orders_per_minute: 30
+      orders_per_second: 3
+    order_types:
+      - "LIMIT"
+      - "MARKET"
+      - "STOP"
+    timeframes:
+      - "1m"
+      - "5m"
+      - "15m"
+      - "1h"
+      - "6h"
+      - "1d"
+
+  # Stock exchanges
+  alpaca:
+    type: "us_stocks"
+    priority: 1
+    endpoints:
+      rest: "https://api.alpaca.markets/v2"
+      websocket: "wss://stream.data.alpaca.markets/v2"
+    rate_limits:
+      requests_per_minute: 200
+    order_types:
+      - "MARKET"
+      - "LIMIT"
+      - "STOP"
+      - "STOP_LIMIT"
+    timeframes:
+      - "1m"
+      - "5m"
+      - "15m"
+      - "1h"
+      - "1d"
+
+# Time frame settings
+timeframes:
+  - id: "1m"
+    name: "1 Minute"
+    seconds: 60
+    candles_per_day: 1440
+
+  - id: "5m"
+    name: "5 Minutes"
+    seconds: 300
+    candles_per_day: 288
+
+  - id: "15m"
+    name: "15 Minutes"
+    seconds: 900
+    candles_per_day: 96
+
+  - id: "30m"
+    name: "30 Minutes"
+    seconds: 1800
+    candles_per_day: 48
+
+  - id: "1h"
+    name: "1 Hour"
+    seconds: 3600
+    candles_per_day: 24
+
+  - id: "4h"
+    name: "4 Hours"
+    seconds: 14400
+    candles_per_day: 6
+
+  - id: "1d"
+    name: "1 Day"
+    seconds: 86400
+    candles_per_day: 1
+
+  - id: "1w"
+    name: "1 Week"
+    seconds: 604800
+    candles_per_day: 0.2
+
+# Market data types
+data_types:
+  # OHLCV (candle) data
+  ohlcv:
+    required_fields:
+      - "timestamp"
+      - "open"
+      - "high"
+      - "low"
+      - "close"
+      - "volume"
+    optional_fields:
+      - "number_of_trades"
+      - "taker_buy_volume"
+    default_limit: 1000
+
+  # Ticker data
+  ticker:
+    required_fields:
+      - "timestamp"
+      - "price"
+      - "volume"
+    update_interval: 1 # seconds
+
+  # Order book data
+  order_book:
+    required_fields:
+      - "timestamp"
+      - "bids"
+      - "asks"
+    default_depth: 10
+    update_interval: 1 # seconds
+
+  # Trade data
+  trades:
+    required_fields:
+      - "timestamp"
+      - "price"
+      - "quantity"
+      - "side"
+    update_interval: 1 # seconds
+
+# Market opening times and asset definitions
+
+# Market opening times (America/Toronto)
+market_times:
+  tokyo: "00:00:00"
+  london: "08:00:00"
+  newyork: "13:30:00"
+  sydney: "22:00:00"
+
+# Assets and prediction parameters
+assets:
+  supported:
+    - gold
+    - bitcoin
+    - silver
+    - ethereum
+  significant_move_threshold: 0.5
+  default_lookback_days: 365
+
+# Ticker mapping for data sources
+ticker_map:
+  gold: ["GC=F", "XAUUSD=X"]
+  bitcoin: ["BTC-USD"]
+  silver: ["SI=F", "XAGUSD=X"]
+  ethereum: ["ETH-USD"]
+
+# Synthetic data generation parameters
+asset_synthetic_data:
+  gold:
+    base_price: 2000
+    volatility: 5
+  bitcoin:
+    base_price: 40000
+    volatility: 500
+  silver:
+    base_price: 25
+    volatility: 0.5
+  ethereum:
+    base_price: 3000
+    volatility: 100

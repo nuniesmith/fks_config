@@ -1,0 +1,100 @@
+# Kubernetes Role Bindings Configuration
+k8s:
+  role-bindings:
+    - name: pod-reader-binding
+      namespace: default
+      role: pod-reader
+      subjects:
+        - kind: ServiceAccount
+          name: app-service-account
+          namespace: default
+    - name: datadog-clusterrolebinding
+      subjects:
+        - kind: ServiceAccount
+          name: datadog-service-account
+          namespace: fks-development
+      roleRef:
+        kind: ClusterRole
+        name: datadog-clusterrole
+        apiGroup: rbac.authorization.k8s.io
+    - name: fks-api-clusterrolebinding
+      subjects:
+        - kind: ServiceAccount
+          name: fks-api-service-account
+          namespace: fks-development
+      roleRef:
+        kind: ClusterRole
+        name: fks-api-clusterrole
+        apiGroup: rbac.authorization.k8s.io
+    - name: fks-app-clusterrolebinding
+      subjects:
+        - kind: ServiceAccount
+          name: fks-app-service-account
+          namespace: fks-development
+      roleRef:
+        kind: ClusterRole
+        name: fks-app-clusterrole
+        apiGroup: rbac.authorization.k8s.io
+    - name: fks-data-clusterrolebinding
+      subjects:
+        - kind: ServiceAccount
+          name: fks-data-service-account
+          namespace: fks-development
+      roleRef:
+        kind: ClusterRole
+        name: fks-data-clusterrole
+        apiGroup: rbac.authorization.k8s.io
+    - name: fks-pine-clusterrolebinding
+      subjects:
+        - kind: ServiceAccount
+          name: fks-pine-service-account
+          namespace: fks-development
+      roleRef:
+        kind: ClusterRole
+        name: fks-pine-clusterrole
+        apiGroup: rbac.authorization.k8s.io
+    - name: fks-training-clusterrolebinding
+      subjects:
+        - kind: ServiceAccount
+          name: fks-training-service-account
+          namespace: fks-development
+      roleRef:
+        kind: ClusterRole
+        name: fks-training-clusterrole
+        apiGroup: rbac.authorization.k8s.io
+    - name: fks-watcher-clusterrolebinding
+      subjects:
+        - kind: ServiceAccount
+          name: fks-watcher-service-account
+          namespace: fks-development
+      roleRef:
+        kind: ClusterRole
+        name: fks-watcher-clusterrole
+        apiGroup: rbac.authorization.k8s.io
+    - name: fks-web-clusterrolebinding
+      subjects:
+        - kind: ServiceAccount
+          name: fks-web-service-account
+          namespace: fks-development
+      roleRef:
+        kind: ClusterRole
+        name: fks-web-clusterrole
+        apiGroup: rbac.authorization.k8s.io
+    - name: fks_worker-clusterrolebinding
+      subjects:
+        - kind: ServiceAccount
+          name: fks_worker-service-account
+          namespace: fks-development
+      roleRef:
+        kind: ClusterRole
+        name: fks_worker-clusterrole
+        apiGroup: rbac.authorization.k8s.io
+    - name: nginx-ingress-clusterrolebinding
+      subjects:
+        - kind: ServiceAccount
+          name: nginx-ingress
+          namespace: fks-development
+      roleRef:
+        kind: ClusterRole
+        name: nginx-ingress-clusterrole
+        apiGroup: rbac.authorization.k8s.io

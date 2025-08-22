@@ -1,0 +1,42 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["fks_prometheus:9090"]
+
+  - job_name: "redis"
+    static_configs:
+      - targets: ["redis:6379"]
+
+  - job_name: "fks-api"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["api:8000"]
+
+  - job_name: "fks-data"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["data:9001"]
+
+  - job_name: "fks-engine"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["engine:9010"]
+
+  - job_name: "fks-transformer"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["transformer:8089"]
+
+  - job_name: "nginx"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["nginx:80"]
+
+  - job_name: "jupyter"
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["jupyter:8888"]

@@ -1,0 +1,127 @@
+# Application Service Configuration
+service:
+  name: app
+  port: 9000
+  workers: ${APP_WORKERS:2}
+
+# Trading Engine Configuration
+trading:
+  mode: ${TRADING_MODE:paper}
+  symbols: ${TRADING_SYMBOLS}
+  
+  # Event processing
+  events:
+    buffer_size: 131072  # 128K events for disruptor
+    spaces:
+      market_events: 100000
+      trading_signals: 50000
+      orders: 10000
+      risk_alerts: 5000
+    
+    processors:
+      market: 4
+      signal: 2
+      order: 2
+
+# Strategy Configuration
+strategies:
+  momentum_spy:
+    type: momentum
+    enabled: true
+    symbols: ["SPY", "QQQ"]
+    params:
+      lookback_period: 20
+      momentum_threshold: 0.02
+      rsi_period: 14
+      position_size: 0.1
+      
+  mean_reversion_tech:
+    type: mean_reversion
+    enabled: true
+    symbols: ["AAPL", "GOOGL", "MSFT", "AMZN"]
+    params:
+      bollinger_period: 20
+      bollinger_std: 2
+      entry_threshold: 0.95
+      exit_threshold: 0.5
+      
+  ml_ensemble_crypto:
+    type: ml_ensemble
+    enabled: true
+    symbols: ["BTCUSDT", "ETHUSDT"]
+    params:
+      models:
+        xgboost_v1: models/xgboost_crypto_v1.pkl
+        lstm_v2: models/lstm_crypto_v2.h5
+      ensemble_method: weighted_voting
+      min_confidence: 0.8
+      
+  adaptive_multi:
+    type: adaptive
+    enabled: true
+    symbols: ${TRADING_SYMBOLS}
+    params:
+      base_strategies: [momentum, mean_reversion]
+      adaptation_period: 100
+      performance_window: 20
+
+# Risk Management
+risk:
+  # Position limits
+  limits:
+    max_position_size: 100000
+    max_portfolio_exposure: 0.8
+    max_sector_exposure: 0.3
+    max_correlation: 0.7
+    max_daily_loss: 50000
+    max_drawdown: 0.15
+    
+  # Value at Risk
+  var:
+    method: historical
+    confidence_level: 0.95
+    lookback_days: 252
+    
+  # Risk checks (all enabled by default)
+  checks:
+    - position_limit
+    - exposure_limit
+    - correlation_limit
+    - var_limit
+    - drawdown_limit
+
+# Order Execution
+execution:
+  routing:
+    default_venue: primary
+    smart_routing: true
+    
+  slippage:
+    model: linear
+    base_bps: 2
+    size_impact: 0.1
+    
+  timing:
+    max_order_age: 60
+    cancel_timeout: 300
+
+# Monitoring & Alerting
+monitoring:
+  port: 9090
+  
+  performance:
+    metrics: [pnl, sharpe, drawdown]
+    update_interval: 60
+    
+  alerts:
+    strategy_error_rate:
+      condition: "rate(strategy_errors[5m]) > 0.1"
+      severity: warning
+      
+    risk_breach:
+      condition: "risk_limit_breached == 1"
+      severity: critical
+      
+    low_signal_quality:
+      condition: "avg(signal_confidence[5m]) < 0.5"
+      severity: info

@@ -1,0 +1,13 @@
+[Unit]
+Description=FKS SSL Certificate Renewal Timer
+Documentation=https://github.com/nuniesmith/fks
+Requires=fks-ssl-manager.service
+
+[Timer]
+# Run twice daily at random times to spread load
+OnCalendar=*-*-* 02,14:00:00
+RandomizedDelaySec=3600
+Persistent=true
+
+[Install]
+WantedBy=timers.target

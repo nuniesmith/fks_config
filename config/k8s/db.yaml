@@ -1,0 +1,17 @@
+# Kubernetes Database Configuration
+k8s:
+  db:
+    postgres:
+      image: postgres:14-alpine
+      namespace: database
+      persistent: true
+      pvcSize: 5Gi
+      env:
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: password
+        POSTGRES_DB: db
+    redis:
+      image: redis:6-alpine
+      namespace: database
+      persistent: true
+      pvcSize: 1Gi

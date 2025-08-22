@@ -1,0 +1,51 @@
+# External services configuration
+
+# External Services
+external:
+  # Database services
+  database:
+    redis:
+      image_tag: "redis:latest"
+      port: &redis_port 6379
+      password: &redis_password "${REDIS_PASSWORD:-123456}"
+      healthcheck_cmd: "sh -c 'redis-cli -a ${REDIS_PASSWORD:-123456} ping || exit 1'"
+      exporter:
+        image_tag: "oliver006/redis_exporter:latest"
+        port: &redis_exporter_port 9121
+        data_path: "/data"
+        healthcheck_cmd: "curl -f http://localhost:${redis_exporter_port}/ || exit 1"
+
+    postgres:
+      image_tag: "postgres:latest"
+      port: &postgres_port 5432
+      db: &postgres_db "financial_data"
+      user: &postgres_user "${POSTGRES_USER:-postgres}"
+      password: &postgres_password "${POSTGRES_PASSWORD:-123456}"
+      healthcheck_cmd: "pg_isready -U ${postgres_user}"
+      exporter:
+        image_tag: "wrouesnel/postgres_exporter:latest"
+        port: &postgres_exporter_port 9187
+        data_path: "/data"
+        healthcheck_cmd: "curl -f http://localhost:${postgres_exporter_port}/ || exit 1"
+
+  # Monitoring services
+  monitoring:
+    prometheus:
+      image_tag: "prom/prometheus:latest"
+      port: &prometheus_port 9090
+      data_path: "/prometheus"
+      config_path: "/etc/prometheus"
+      healthcheck_cmd: "curl -f http://localhost:${prometheus_port}/ || exit 1"
+
+    grafana:
+      image_tag: "grafana/grafana:latest"
+      port: &grafana_port 3000
+      data_path: "/var/lib/grafana"
+      config_path: "/etc/grafana"
+      healthcheck_cmd: "curl -f http://localhost:${grafana_port}/ || exit 1"
+
+# Optional environment variables with defaults
+optional_env_vars:
+  - POSTGRES_USER # Defaults to postgres
+  - POSTGRES_PASSWORD # Defaults to 123456
+  - REDIS_PASSWORD # Defaults to 123456

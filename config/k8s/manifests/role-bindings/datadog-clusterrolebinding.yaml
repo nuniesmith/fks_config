@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: datadog-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: datadog-service-account
+  namespace: fks-development
+roleRef:
+  kind: ClusterRole
+  name: datadog-clusterrole
+  apiGroup: rbac.authorization.k8s.io

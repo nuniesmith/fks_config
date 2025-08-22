@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: fks-development
+  labels:
+    app: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        env:
+        - name: POSTGRES_DB
+          value: financial_data
+        - name: PGDATA
+          value: /var/lib/postgresql/data
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+              name: fks-app-config
+              key: TZ
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: 500m
+          requests:
+            memory: 256Mi
+            cpu: 250m
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: postgres-data-pvc
+          mountPath: /var/lib/postgresql/data
+        - name: postgres-logs-pvc
+          mountPath: /var/log/postgres
+      volumes:
+      - name: postgres-data-pvc
+        persistentVolumeClaim:
+          claimName: postgres-data-pvc
+      - name: postgres-logs-pvc
+        persistentVolumeClaim:
+          claimName: postgres-logs-pvc
+      imagePullSecrets:
+      - name: regcred

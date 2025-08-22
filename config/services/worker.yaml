@@ -1,0 +1,239 @@
+# Worker Service Configuration
+service:
+  name: worker
+  port: 8001
+  workers: ${WORKER_COUNT:4}
+  timeout: 60
+  log_level: "INFO"
+
+# Redis connection configuration
+redis:
+  host: ${REDIS_HOST:redis}
+  port: ${REDIS_PORT:6379}
+  password: ${REDIS_PASSWORD}
+  db: ${REDIS_WORKER_DB:1}
+
+# Queue configuration
+queues:
+  high_priority:
+    type: redis
+    priority: 10
+    max_size: 10000
+    workers: 4
+    
+  default:
+    type: redis
+    priority: 5
+    max_size: 50000
+    workers: 8
+    
+  low_priority:
+    type: redis
+    priority: 1
+    max_size: 100000
+    workers: 2
+
+# Task executors
+executors:
+  # Async executor for I/O bound tasks
+  async:
+    name: async_executor
+    type: async
+    workers: 8
+    max_concurrent_tasks: 16
+    timeout: 300
+    
+  # CPU intensive tasks
+  cpu_intensive:
+    name: cpu_intensive
+    type: process
+    processes: 4
+    timeout: 600
+    
+  # Distributed processing
+  distributed:
+    name: distributed_executor
+    type: distributed
+    nodes: ${WORKER_NODES:2}
+    timeout: 300
+    
+  # Financial analysis specific
+  market_analysis:
+    type: market_analysis
+    workers: 4
+    timeout: 300
+    queue: high_priority
+    
+  backtest:
+    type: backtest
+    workers: 2
+    timeout: 3600
+    queue: default
+    
+  model_training:
+    type: model_training
+    workers: 1
+    timeout: 7200
+    queue: low_priority
+
+# Task scheduler
+scheduler:
+  type: advanced
+  persistence: redis
+  timezone: UTC
+  
+  # Default task settings
+  defaults:
+    timeout: 300
+    max_attempts: 3
+    retry_delay: 60
+  
+  # Scheduled jobs
+  jobs:
+    # Technical analysis every 5 minutes
+    technical_analysis_5m:
+      task: technical_analysis
+      schedule: "*/5 * * * *"
+      queue: high_priority
+      parameters:
+        symbols: ${TRADING_SYMBOLS}
+        timeframe: "5m"
+        indicators:
+          - rsi_14
+          - macd_12_26_9
+          
+    # Daily market analysis
+    daily_market_analysis:
+      task: market_analysis
+      schedule: "0 9 * * *"  # 9 AM daily
+      queue: default
+      parameters:
+        symbols: ["AAPL", "GOOGL", "MSFT", "TSLA", "NVDA"]
+        timeframe: "1d"
+        analysis_types:
+          - trend
+          - momentum
+          - support_resistance
+          
+    # Daily performance report
+    daily_performance_report:
+      task: generate_daily_report
+      schedule: "0 21 * * *"  # 9 PM UTC
+      queue: default
+      parameters:
+        report_type: performance
+        recipients: ${REPORT_RECIPIENTS}
+        include_charts: true
+        
+    # Hourly data cleanup
+    hourly_cleanup:
+      task: data_cleanup
+      schedule: "0 * * * *"  # Every hour
+      queue: low_priority
+      parameters:
+        older_than_days: 7
+        tables:
+          - temp_calculations
+          - expired_signals
+          - cache_entries
+          
+    # Weekly model retraining
+    weekly_model_retrain:
+      task: retrain_models
+      schedule: "0 2 * * 0"  # Sunday 2 AM
+      queue: low_priority
+      parameters:
+        models:
+          - price_predictor
+          - signal_classifier
+          - volatility_predictor
+        lookback_days: 90
+        validation_split: 0.2
+
+# Task type configurations
+task_types:
+  technical_analysis:
+    timeout: 180
+    max_attempts: 2
+    retry_delay: 30
+    
+  market_analysis:
+    timeout: 300
+    max_attempts: 3
+    retry_delay: 60
+    
+  generate_daily_report:
+    timeout: 600
+    max_attempts: 2
+    retry_delay: 120
+    
+  data_cleanup:
+    timeout: 900
+    max_attempts: 1
+    retry_delay: 300
+    
+  retrain_models:
+    timeout: 7200
+    max_attempts: 1
+    retry_delay: 3600
+
+# Monitoring and health checks
+monitoring:
+  enabled: true
+  metrics_port: 8091
+  health_check:
+    endpoint: "/health"
+    interval: 30
+    timeout: 10
+  
+  # Performance metrics
+  metrics:
+    task_completion_rate: true
+    queue_depth: true
+    executor_utilization: true
+    memory_usage: true
+    
+  # Alerting configuration
+  alerts:
+    task_failure_rate:
+      condition: "rate(task_failures[5m]) > 0.1"
+      severity: warning
+      notify: ${ALERT_WEBHOOK}
+      
+    queue_depth_critical:
+      condition: "queue_depth > 10000"
+      severity: critical
+      notify: ${ALERT_WEBHOOK}
+      
+    high_executor_utilization:
+      condition: "executor_utilization > 0.9"
+      severity: warning
+      notify: ${ALERT_WEBHOOK}
+      
+    memory_usage_high:
+      condition: "memory_usage > 0.85"
+      severity: warning
+      notify: ${ALERT_WEBHOOK}
+
+# Logging configuration
+logging:
+  level: ${APP_LOG_LEVEL:INFO}
+  format: "json"
+  handlers:
+    - type: console
+    - type: file
+      filename: "/app/logs/worker.log"
+      max_size: "100MB"
+      backup_count: 5
+
+# Resource limits
+resources:
+  memory_limit: "2GB"
+  cpu_limit: "2.0"
+  max_open_files: 1024
+  
+# Development/debugging
+debug:
+  enabled: ${DEBUG_MODE:false}
+  profiling: false
+  task_tracing: false

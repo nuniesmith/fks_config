@@ -1,0 +1,8 @@
+name: grafana
+namespace: monitoring
+type: deployment
+image: grafana/grafana:latest
+configMaps:
+- grafana-config
+persistent: true
+pvcSize: 1Gi

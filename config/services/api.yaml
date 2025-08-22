@@ -1,0 +1,193 @@
+# API Service Configuration
+service:
+  name: api
+  version: 1.0.0
+  host: ${API_HOST:0.0.0.0}
+  port: ${API_PORT:8000}
+  workers: ${API_WORKERS:4}
+  debug: ${DEBUG_MODE:false}
+
+# Server Configuration
+server:
+  engine: uvicorn
+  settings:
+    log_level: ${LOG_LEVEL:info}
+    access_log: true
+    use_colors: true
+    reload: ${DEV_MODE:false}
+
+# Middleware Stack
+middleware:
+  # Cross-Origin Resource Sharing
+  cors:
+    enabled: true
+    origins: ${CORS_ORIGINS:["*"]}
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
+    headers: ["*"]
+    credentials: true
+    max_age: 86400
+
+  # Rate Limiting
+  rate_limiting:
+    enabled: true
+    global:
+      requests: 1000
+      window_seconds: 60
+    per_user:
+      requests: 100
+      window_seconds: 60
+    endpoint_overrides:
+      "/api/v1/trading/orders":
+        POST:
+          requests: 10
+          window_seconds: 60
+      "/api/v1/auth/login":
+        POST:
+          requests: 5
+          window_seconds: 300
+
+  # Circuit Breaker
+  circuit_breaker:
+    enabled: true
+    failure_threshold: 0.5
+    recovery_timeout_seconds: 60
+    minimum_requests: 10
+    half_open_max_calls: 3
+
+  # Response Compression
+  compression:
+    enabled: true
+    minimum_size_bytes: 1000
+    algorithms: ["gzip", "deflate", "br"]
+
+# Security & Authentication
+security:
+  # JWT Authentication
+  jwt:
+    enabled: true
+    secret: ${JWT_SECRET}
+    algorithm: HS256
+    access_token_expire_minutes: ${JWT_ACCESS_EXPIRE:15}
+    refresh_token_expire_minutes: ${JWT_REFRESH_EXPIRE:1440}
+    issuer: "fks-trading-api"
+
+  # API Key Authentication
+  api_key:
+    enabled: true
+    header_name: X-API-Key
+    query_param: api_key
+    
+  # OAuth2 (Future)
+  oauth2:
+    enabled: false
+    providers:
+      google:
+        client_id: ${GOOGLE_CLIENT_ID}
+        client_secret: ${GOOGLE_CLIENT_SECRET}
+        scopes: ["openid", "email", "profile"]
+
+# WebSocket Configuration
+websocket:
+  enabled: true
+  path: /ws
+  ping_interval_seconds: 30
+  ping_timeout_seconds: 10
+  max_connections_total: ${WS_MAX_CONNECTIONS:1000}
+  max_connections_per_client: 5
+  
+  # Channel Configuration
+  channels:
+    market_data:
+      buffer_size: 1000
+      throttle_ms: 100
+      compression: true
+    orders:
+      buffer_size: 100
+      throttle_ms: 0
+      auth_required: true
+    positions:
+      buffer_size: 100
+      throttle_ms: 1000
+      auth_required: true
+
+# API Documentation
+documentation:
+  openapi:
+    enabled: true
+    title: "FKS Trading Systems API"
+    description: "High-performance algorithmic trading system API"
+    version: ${service.version}
+    docs_url: /docs
+    redoc_url: /redoc
+    openapi_url: /openapi.json
+    
+  metadata:
+    terms_of_service: "https://fks.trading/terms"
+    contact:
+      name: "API Support Team"
+      email: "api-support@fks.trading"
+      url: "https://fks.trading/support"
+    license:
+      name: "Proprietary License"
+      url: "https://fks.trading/license"
+
+# Monitoring & Observability
+monitoring:
+  # Health Checks
+  health:
+    enabled: true
+    endpoint: /health
+    readiness_endpoint: /ready
+    liveness_endpoint: /live
+    
+  # Metrics
+  metrics:
+    enabled: true
+    port: ${METRICS_PORT:8090}
+    endpoint: /metrics
+    include_in_schema: false
+    
+  # Logging
+  logging:
+    level: ${LOG_LEVEL:info}
+    format: json
+    include_trace_id: true
+    
+  # Alerts Configuration
+  alerts:
+    error_rate:
+      condition: "rate(http_requests_total{status=~'5..'}[5m]) > 0.05"
+      severity: critical
+      description: "High 5xx error rate detected"
+      
+    high_latency:
+      condition: "histogram_quantile(0.95, http_request_duration_seconds_bucket) > 1.0"
+      severity: warning
+      description: "95th percentile latency exceeds 1 second"
+      
+    circuit_breaker_open:
+      condition: "circuit_breaker_state == 1"
+      severity: warning
+      description: "Circuit breaker is open"
+
+# Database & External Services
+dependencies:
+  database:
+    connection_timeout_seconds: 30
+    pool_size: 10
+    max_overflow: 20
+    
+  redis:
+    connection_timeout_seconds: 5
+    max_connections: 50
+    
+  external_apis:
+    timeout_seconds: 30
+    retry_attempts: 3
+    retry_backoff_seconds: 1
+
+# Development Settings
+development:
+  auto_reload: ${DEV_MODE:false}
+  debug_toolbar: ${DEBUG_TOOLBAR:false}
+  mock_external_services: ${MOCK_SERVICES:false}

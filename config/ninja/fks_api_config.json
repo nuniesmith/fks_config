@@ -1,0 +1,94 @@
+{
+  "api": {
+    "host": "0.0.0.0",
+    "port": 8002,
+    "debug": true,
+    "reload": true,
+    "log_level": "info",
+    "cors_origins": ["*"],
+    "title": "FKS Trading API",
+    "description": "Advanced Trading Analysis with LGMM Integration",
+    "version": "1.0.0"
+  },
+  "trading": {
+    "default_account_size": 150000,
+    "default_risk_per_trade": 0.01,
+    "max_analysis_duration": 300,
+    "cache_results": true,
+    "cache_ttl": 3600
+  },
+  "assets": {
+    "default_configs": {
+      "GC=F": {
+        "name": "Gold Futures",
+        "asset_type": "futures",
+        "tick_value": 10.0,
+        "margin_per_contract": 15000.0,
+        "commission": 5.0,
+        "multiplier": 1.0
+      },
+      "NQ=F": {
+        "name": "Nasdaq Futures", 
+        "asset_type": "futures",
+        "tick_value": 5.0,
+        "margin_per_contract": 15000.0,
+        "commission": 5.0,
+        "multiplier": 1.0
+      },
+      "CL=F": {
+        "name": "Crude Oil Futures",
+        "asset_type": "futures", 
+        "tick_value": 10.0,
+        "margin_per_contract": 8002.0,
+        "commission": 5.0,
+        "multiplier": 1.0
+      },
+      "BTC-USD": {
+        "name": "Bitcoin",
+        "asset_type": "crypto",
+        "tick_value": 1.0,
+        "margin_per_contract": 50000.0,
+        "commission": 10.0,
+        "multiplier": 1.0
+      },
+      "AAPL": {
+        "name": "Apple Inc",
+        "asset_type": "stocks",
+        "tick_value": 0.01,
+        "margin_per_contract": 0.0,
+        "commission": 1.0,
+        "multiplier": 100.0
+      }
+    }
+  },
+  "lgmm": {
+    "default_params": {
+      "n_components": 2,
+      "poly_degree": 2,
+      "std_multiplier": 2.0,
+      "train_window": 252
+    },
+    "data_source": {
+      "provider": "yfinance",
+      "retry_attempts": 3,
+      "timeout": 30
+    }
+  },
+  "ninjatrader": {
+    "metrics_buffer_size": 1000,
+    "log_retention_days": 30,
+    "connection_timeout": 30
+  },
+  "websocket": {
+    "max_connections": 100,
+    "heartbeat_interval": 30,
+    "message_queue_size": 1000
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    "file_path": "./logs/fks_api.log",
+    "max_file_size": "10MB",
+    "backup_count": 5
+  }
+}

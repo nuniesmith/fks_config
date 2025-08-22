@@ -1,0 +1,26 @@
+# Workflow Configuration for 00-complete.yml
+description: FKS Trading Systems - Deployment Pipeline
+trigger:
+  branches:
+    - main
+    - develop
+  types:
+    - push
+    - pull_request
+    - workflow_dispatch
+jobs:
+  preflight-checks:
+    name: Pre-flight Checks
+    runs-on: self-hosted
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Configure runner
+        run: |
+          if sudo -n true 2>/dev/null; then
+            SUDO_STATE=TRUE
+          fi
+          export DEBIAN_FRONTEND=noninteractive
+        env:
+          DEBIAN_FRONTEND: noninteractive
+

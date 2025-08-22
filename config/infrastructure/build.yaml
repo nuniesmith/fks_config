@@ -1,0 +1,115 @@
+# Build configuration with dynamic variables
+# Build Configuration
+build:
+  # Common settings
+  common:
+    compose_bake: true
+    python_version: &python_version "3.11"
+    user_name: &user_name "appuser"
+    user_name_with_suffix: "${user_name}-${SERVICE_NAME:-app}"
+    user_id: &user_id 1088
+    group_id: &group_id 1088
+    use_system_packages: &use_system_packages true
+    install_nicegui: &install_nicegui true
+
+  # GPU settings
+  gpu:
+    cuda_version: &cuda_version "12.8.0"
+    cudnn_version: &cudnn_version "cudnn"
+    ubuntu_version: &ubuntu_version "ubuntu24.04"
+    nvidia_visible_devices: &nvidia_visible_devices "all"
+    nvidia_driver_capabilities: &nvidia_driver_capabilities "compute,utility"
+
+  # Resource paths
+  paths:
+    common_dockerfile: &common_dockerfile "./deployment/docker/Dockerfile"
+    common_entrypoint: &common_entrypoint "./scripts/docker/entrypoint.sh"
+    requirements_base: &requirements_base "./deployment/docker"
+    cpu_requirements_prefix: &cpu_requirements_prefix "${requirements_base}/cpu"
+    gpu_requirements_prefix: &gpu_requirements_prefix "${requirements_base}/gpu"
+
+  # Default build args (can be used in Docker build)
+  default_args: &default_build_args
+    PYTHON_VERSION: *python_version
+    USER_NAME: *user_name
+    USER_ID: *user_id
+    GROUP_ID: *group_id
+    USE_SYSTEM_PACKAGES: *use_system_packages
+    INSTALL_NICEGUI: *install_nicegui
+
+  # Default GPU build args
+  gpu_args: &default_gpu_args
+    <<: *default_build_args
+    CUDA_VERSION: *cuda_version
+    CUDNN_VERSION: *cudnn_version
+    UBUNTU_VERSION: *ubuntu_version
+    NVIDIA_VISIBLE_DEVICES: *nvidia_visible_devices
+    NVIDIA_DRIVER_CAPABILITIES: *nvidia_driver_capabilities
+
+  # Environment templates for different build types
+  environments:
+    development: &dev_env
+      APP_ENV: "development"
+      LOG_LEVEL: "INFO"
+      DEBUG: "true"
+      ENABLE_DOCS: "true"
+      GENERATE_DOCS_ON_STARTUP: "true"
+
+    staging: &staging_env
+      APP_ENV: "staging"
+      LOG_LEVEL: "INFO"
+      DEBUG: "false"
+      ENABLE_DOCS: "true"
+      GENERATE_DOCS_ON_STARTUP: "true"
+
+    production: &prod_env
+      APP_ENV: "production"
+      LOG_LEVEL: "WARNING"
+      DEBUG: "false"
+      ENABLE_DOCS: "false"
+      GENERATE_DOCS_ON_STARTUP: "false"
+
+  # Build configurations for different services
+  configs:
+    # CPU service build configuration template
+    cpu_service: &cpu_service_build
+      build_type: "cpu"
+      dockerfile: *common_dockerfile
+      entrypoint: *common_entrypoint
+      build_args:
+        <<: *default_build_args
+        BUILD_TYPE: "cpu"
+      environment:
+        <<: *dev_env
+
+    # GPU service build configuration template
+    gpu_service: &gpu_service_build
+      build_type: "gpu"
+      dockerfile: *common_dockerfile # Using the same Dockerfile with dynamic config
+      entrypoint: *common_entrypoint
+      build_args:
+        <<: *default_gpu_args
+        BUILD_TYPE: "gpu"
+      environment:
+        <<: *dev_env
+
+    # Service-specific build configurations
+    app:
+      <<: *cpu_service_build
+      requirements_path: "${cpu_requirements_prefix}/app/requirements.txt"
+
+    api:
+      <<: *cpu_service_build
+      requirements_path: "${cpu_requirements_prefix}/api/requirements.txt"
+
+    worker:
+      <<: *cpu_service_build
+      requirements_path: "${cpu_requirements_prefix}/worker/requirements.txt"
+
+    data:
+      <<: *cpu_service_build
+      requirements_path: "${cpu_requirements_prefix}/data/requirements.txt"
+
+    trainer:
+      <<: *gpu_service_build
+      requirements_path: "${gpu_requirements_prefix}/trainer/requirements.txt"

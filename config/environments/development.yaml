@@ -1,0 +1,96 @@
+# ============================================================
+# FKS Trading Systems - Development Environment Configuration
+# ============================================================
+
+# Environment identifier
+environment:
+  type: "development"
+  debug_mode: true
+
+# Log levels for development
+logging:
+  log_level: "DEBUG"
+  verbose_level: "DEBUG"
+
+# Database connections for development
+databases:
+  postgres:
+    host: "localhost"
+    password: "dev_password_123"
+    schema: "dev_schema"
+  
+  redis:
+    host: "localhost"
+    password: "dev_password_123"
+
+# Service hostnames for development
+services:
+  api:
+    host: "localhost"
+  worker:
+    host: "localhost"
+  app:
+    host: "localhost"
+  data:
+    host: "localhost"
+  web:
+    host: "localhost"
+  training:
+    host: "localhost"
+
+# Trading settings for development
+trading:
+  mode: "paper" # Always use paper trading in dev
+  paper_trading:
+    initial_balance: 10000
+    simulate_slippage: true
+    slippage_percent: 0.05
+    simulate_fees: true
+    fee_percent: 0.1
+
+# API settings
+api:
+  rate_limiting:
+    enabled: false
+  authentication:
+    jwt:
+      token_expire_minutes: 43200 # 30 days for dev
+
+# Data source settings
+data_sources:
+  cache_enabled: true
+  use_local_cache: true
+  
+  # Use public APIs without auth in dev
+  bitstamp:
+    api_key: ""
+    use_testnet: true
+  
+  yahoo_finance:
+    enabled: true
+    
+  polygon:
+    api_key: "${POLYGON_API_KEY}"
+
+# ML settings
+ml:
+  accelerator: "cpu" # Use CPU by default in dev
+  max_epochs: 2 # Limit training in dev
+
+# Feature flags - development specific
+feature_flags:
+  enable_real_data: false # Use synthetic/demo data
+  enable_debug_endpoints: true
+  enable_profiling: true
+  
+# Server settings
+server:
+  debug: true
+  cors_origins: ["http://localhost:3000", "http://localhost:9999"]
+  
+# Security settings - relaxed for development
+security:
+  secret_key: "development_secret_key_change_in_production"
+  cors:
+    enabled: true
+    allow_origins: ["*"]

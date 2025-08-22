@@ -1,0 +1,8 @@
+name: prometheus
+namespace: monitoring
+type: statefulset
+image: prom/prometheus:latest
+configMaps:
+- prometheus-config
+persistent: true
+pvcSize: 5Gi

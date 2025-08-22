@@ -1,0 +1,7 @@
+users:
+  jordan:
+    displayname: Jordan
+    password: $argon2id$v=19$m=65536,t=3,p=4$qIs+TTjl1S+ju+KzIrp7LQ$K3wZCgd5bsfz+JqkrB2i0d+qm/spUD3JAh5l/XI/K30
+    email: nunie.smith01@gmail.com
+    groups:
+      - admins
