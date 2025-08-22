@@ -16,7 +16,6 @@ tracing-subscriber = { version = "0.3", features=["fmt","env-filter"] }
 chrono = { version = "0.4", features=["clock"] }
 uuid = { version = "1", features=["v4"] }
 schemars = { version = "0.8", features = ["derive"] }
-shared-rust = { path = "shared/rust" }
 
 [dev-dependencies]
 tempfile = "3"
