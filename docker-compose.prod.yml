@@ -1,0 +1,5 @@
+services:
+  config:
+    image: ${DOCKER_REGISTRY:-fkstrading}/fks-config:${CONFIG_VERSION:-latest}
+    ports:
+      - "9000:9000"

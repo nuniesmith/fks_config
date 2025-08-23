@@ -1,11 +1,19 @@
 use crate::model::AppConfig;
 use anyhow::{Context, Result};
 use std::{fs, path::Path};
+use serde_path_to_error::deserialize;
 
 pub fn generate(input: &Path, output: &Path, runtime: Option<&str>) -> Result<()> {
     let raw = fs::read_to_string(input)
         .with_context(|| format!("reading input config: {}", input.display()))?;
-    let cfg: AppConfig = serde_yaml::from_str(&raw).context("parsing yaml")?;
+    // Enhanced error location reporting
+    let de = serde_yaml::Deserializer::from_str(&raw);
+    // Use first document only (typical case)
+    let mut docs = de.into_iter();
+    let first = docs.next().ok_or_else(|| anyhow::anyhow!("empty yaml"))?;
+    let cfg: AppConfig = deserialize(first).map_err(|e| {
+        anyhow::anyhow!("parsing yaml at {}: {}", e.path().to_string(), e)
+    })?;
 
     let max_loss = cfg.account.size * cfg.account.risk_per_trade;
     let mut env_lines = vec![

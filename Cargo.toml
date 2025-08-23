@@ -16,6 +16,19 @@ tracing-subscriber = { version = "0.3", features=["fmt","env-filter"] }
 chrono = { version = "0.4", features=["clock"] }
 uuid = { version = "1", features=["v4"] }
 schemars = { version = "0.8", features = ["derive"] }
+axum = { version = "0.7", optional = true }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"], optional = true }
+hyper = { version = "1", optional = true }
+serde_path_to_error = "0.1"
+
+# Placeholder for shared rust utilities (add real repo as submodule at ../shared/rust or adjust path)
+# shared-rust (add when submodule present)
+# shared-rust = { path = "../shared/rust", optional = true }
 
 [dev-dependencies]
 tempfile = "3"
+
+[features]
+default = []
+server = ["axum", "tokio", "hyper"]
+shared = [] # enable once shared-rust path exists
