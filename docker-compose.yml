@@ -23,11 +23,11 @@
 networks:
   config-network:
     driver: bridge
-    name: fks-config-network
+    name: fks_config-network
   # External network for auth communication
   external:
     external: true
-    name: fks-external
+    name: fks_external
 
 # =================================================================
 # VOLUMES
@@ -215,7 +215,7 @@ services:
   # Trading Config Server
   # =================================================================
   config:
-    image: ${DOCKER_REGISTRY:-fkstrading}/fks-config:${API_VERSION:-latest}
+    image: ${DOCKER_REGISTRY:-fkstrading}/fks_config:${API_VERSION:-latest}
     container_name: fks_config_server
     restart: unless-stopped
     networks:
@@ -259,7 +259,7 @@ services:
   # Celery Worker (Background Tasks)
   # =================================================================
   worker:
-    image: ${DOCKER_REGISTRY:-fkstrading}/fks-config:${API_VERSION:-latest}
+    image: ${DOCKER_REGISTRY:-fkstrading}/fks_config:${API_VERSION:-latest}
     container_name: fks_config_worker
     restart: unless-stopped
     networks:
@@ -304,7 +304,7 @@ services:
   # Celery Beat (Scheduler)
   # =================================================================
   scheduler:
-    image: ${DOCKER_REGISTRY:-fkstrading}/fks-config:${API_VERSION:-latest}
+    image: ${DOCKER_REGISTRY:-fkstrading}/fks_config:${API_VERSION:-latest}
     container_name: fks_config_scheduler
     restart: unless-stopped
     networks:
@@ -340,7 +340,7 @@ services:
   # Market Data Service
   # =================================================================
   market-data:
-    image: ${DOCKER_REGISTRY:-fkstrading}/fks-market-data:${MARKET_DATA_VERSION:-latest}
+    image: ${DOCKER_REGISTRY:-fkstrading}/fks_market-data:${MARKET_DATA_VERSION:-latest}
     container_name: fks_config_market_data
     restart: unless-stopped
     networks:
@@ -382,7 +382,7 @@ services:
   # Risk Management Service
   # =================================================================
   risk-manager:
-    image: ${DOCKER_REGISTRY:-fkstrading}/fks-risk:${RISK_VERSION:-latest}
+    image: ${DOCKER_REGISTRY:-fkstrading}/fks_risk:${RISK_VERSION:-latest}
     container_name: fks_config_risk
     restart: unless-stopped
     networks:

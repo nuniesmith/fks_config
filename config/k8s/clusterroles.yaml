@@ -49,14 +49,14 @@ k8s:
             - list
             - watch
     
-    # Added from fks-app-clusterrole.yaml
-    - name: fks-api-clusterrole
+    # Added from fks_app-clusterrole.yaml
+    - name: fks_api-clusterrole
       rules:
         - apiGroups: [""]
           resources: ["pods", "services"]
           verbs: ["get", "list", "watch"]
     
-    - name: fks-app-clusterrole
+    - name: fks_app-clusterrole
       rules:
         - apiGroups: [""]
           resources:
@@ -105,25 +105,25 @@ k8s:
             - list
             - watch
     
-    - name: fks-data-clusterrole
+    - name: fks_data-clusterrole
       rules:
         - apiGroups: [""]
           resources: ["pods", "services"]
           verbs: ["get", "list", "watch"]
     
-    - name: fks-pine-clusterrole
+    - name: fks_pine-clusterrole
       rules:
         - apiGroups: [""]
           resources: ["pods", "services"]
           verbs: ["get", "list", "watch"]
     
-    - name: fks-training-clusterrole
+    - name: fks_training-clusterrole
       rules:
         - apiGroups: [""]
           resources: ["pods", "services"]
           verbs: ["get", "list", "watch"]
     
-    - name: fks-watcher-clusterrole
+    - name: fks_watcher-clusterrole
       rules:
         - apiGroups: [""]
           resources: ["pods", "services", "endpoints", "nodes"]
@@ -135,7 +135,7 @@ k8s:
           resources: ["jobs", "cronjobs"]
           verbs: ["get", "list", "watch"]
     
-    - name: fks-web-clusterrole
+    - name: fks_web-clusterrole
       rules:
         - apiGroups: [""]
           resources: ["pods", "services"]

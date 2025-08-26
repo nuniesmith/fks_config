@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fks-watcher-service
-  namespace: fks-development
+  name: fks_watcher-service
+  namespace: fks_development
 spec:
   type: ClusterIP
   ports:
@@ -10,4 +10,4 @@ spec:
     port: 8087
     targetPort: 8087
   selector:
-    app: fks-watcher
+    app: fks_watcher

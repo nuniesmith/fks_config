@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-ingress-deployment
-  namespace: fks-development
+  namespace: fks_development
   labels:
     app: nginx-ingress
 spec:

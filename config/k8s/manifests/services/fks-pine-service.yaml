@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fks-pine-service
-  namespace: fks-development
+  name: fks_pine-service
+  namespace: fks_development
 spec:
   type: ClusterIP
   ports:
@@ -10,4 +10,4 @@ spec:
     port: 8085
     targetPort: 8085
   selector:
-    app: fks-pine
+    app: fks_pine

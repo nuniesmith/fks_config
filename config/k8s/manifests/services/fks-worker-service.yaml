@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: fks_worker-service
-  namespace: fks-development
+  namespace: fks_development
 spec:
   type: ClusterIP
   ports:

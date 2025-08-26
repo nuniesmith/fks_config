@@ -5,7 +5,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: nginx-ingress
-  namespace: fks-development
+  namespace: fks_development
 roleRef:
   kind: ClusterRole
   name: nginx-ingress-clusterrole

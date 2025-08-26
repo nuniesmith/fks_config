@@ -34,7 +34,7 @@ k8s:
           memory: 128Mi
     # Added from postgres-deployment.yaml
     - name: postgres
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: postgres
       replicas: 1
@@ -49,7 +49,7 @@ k8s:
             - name: TZ
               valueFrom:
                 configMapKeyRef:
-                  name: fks-app-config
+                  name: fks_app-config
                   key: TZ
           resources:
             limits:
@@ -76,7 +76,7 @@ k8s:
         - name: regcred
     # Added from redis-deployment.yaml
     - name: redis
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: redis
       replicas: 1
@@ -106,9 +106,9 @@ k8s:
         - name: redis-data-pvc
           persistentVolumeClaim:
             claimName: redis-data-pvc
-    # Added from fks-infra-deployments.yaml
+    # Added from fks_infra-deployments.yaml
     - name: nginx-ingress-deployment
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: nginx-ingress
       replicas: 2
@@ -128,7 +128,7 @@ k8s:
       serviceAccountName: nginx-ingress-sa
     # Added from grafana-deployment.yaml
     - name: grafana
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: grafana
       replicas: 1
@@ -167,7 +167,7 @@ k8s:
           emptyDir: {}
     # Added from prometheus-deployment.yaml
     - name: prometheus
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: prometheus
       replicas: 1
@@ -178,7 +178,7 @@ k8s:
             - name: TZ
               valueFrom:
                 configMapKeyRef:
-                  name: fks-app-config
+                  name: fks_app-config
                   key: TZ
           resources:
             limits:
@@ -209,7 +209,7 @@ k8s:
       restartPolicy: Always
     # Added from redis-exporter-deployment.yaml
     - name: redis-exporter
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: redis-exporter
       replicas: 1
@@ -220,7 +220,7 @@ k8s:
             - name: TZ
               valueFrom:
                 configMapKeyRef:
-                  name: fks-app-config
+                  name: fks_app-config
                   key: TZ
           ports:
             - containerPort: 9121

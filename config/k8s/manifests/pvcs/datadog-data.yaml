@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: datadog-data
-  namespace: fks-development
+  namespace: fks_development
   labels:
     app: datadog
 spec:

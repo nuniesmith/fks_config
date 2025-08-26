@@ -1,7 +1,7 @@
 services:
   config:
     build: .
-    command: ["fks-config", "serve", "--port", "9000"]
+    command: ["fks_config", "serve", "--port", "9000"]
     ports:
       - "9000:9000"
     volumes:

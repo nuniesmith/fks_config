@@ -33,7 +33,7 @@ docker:
   registry: "${DOCKER_REGISTRY:-docker.io}"
   namespace: "${DOCKER_NAMESPACE:-nuniesmith}"
   networks:
-    - name: "fks-network"
+    - name: "fks_network"
       driver: "bridge"
   volumes:
     - name: "postgres_data"

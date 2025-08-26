@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: fks-production
+  name: fks_production
   labels:
-    name: fks-production
+    name: fks_production
     environment: production

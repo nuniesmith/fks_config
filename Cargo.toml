@@ -1,5 +1,5 @@
 [package]
-name = "fks-config"
+name = "fks_config"
 version = "0.1.0"
 edition = "2021"
 description = "Configuration generation CLI for FKS (YAML -> .env, docker snippets, code stubs)."
@@ -21,9 +21,8 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros"], optional = tr
 hyper = { version = "1", optional = true }
 serde_path_to_error = "0.1"
 
-# Placeholder for shared rust utilities (add real repo as submodule at ../shared/rust or adjust path)
-# shared-rust (add when submodule present)
-# shared-rust = { path = "../shared/rust", optional = true }
+# Shared Rust utilities (added when submodule present at shared/rust)
+shared_rust = { path = "shared/rust", optional = true }
 
 [dev-dependencies]
 tempfile = "3"
@@ -31,4 +30,4 @@ tempfile = "3"
 [features]
 default = []
 server = ["axum", "tokio", "hyper"]
-shared = [] # enable once shared-rust path exists
+shared = ["shared_rust"] # enable once shared/rust submodule initialized

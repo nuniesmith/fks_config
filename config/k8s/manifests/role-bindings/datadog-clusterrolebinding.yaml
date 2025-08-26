@@ -5,7 +5,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: datadog-service-account
-  namespace: fks-development
+  namespace: fks_development
 roleRef:
   kind: ClusterRole
   name: datadog-clusterrole

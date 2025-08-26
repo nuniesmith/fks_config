@@ -1,4 +1,4 @@
-## Multi-stage Dockerfile for fks-config
+## Multi-stage Dockerfile for fks_config
 ARG RUST_VERSION=1.79
 FROM rust:${RUST_VERSION} AS builder
 WORKDIR /app
@@ -11,7 +11,7 @@ RUN cargo build --release --features server
 FROM debian:bookworm-slim AS runtime
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-COPY --from=builder /app/target/release/fks-config /usr/local/bin/fks-config
+COPY --from=builder /app/target/release/fks_config /usr/local/bin/fks_config
 EXPOSE 9000
-ENTRYPOINT ["fks-config"]
+ENTRYPOINT ["fks_config"]
 CMD ["serve", "--port", "9000"]

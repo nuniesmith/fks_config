@@ -1,12 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: fks-api-clusterrolebinding
+  name: fks_api-clusterrolebinding
 subjects:
 - kind: ServiceAccount
-  name: fks-api-service-account
-  namespace: fks-development
+  name: fks_api-service-account
+  namespace: fks_development
 roleRef:
   kind: ClusterRole
-  name: fks-api-clusterrole
+  name: fks_api-clusterrole
   apiGroup: rbac.authorization.k8s.io

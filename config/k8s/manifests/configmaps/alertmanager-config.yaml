@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: alertmanager-config
-  namespace: fks-development
+  namespace: fks_development
 data:
   alertmanager.yml: |
     global:

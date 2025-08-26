@@ -10,16 +10,16 @@ k8s:
     - name: database
       labels:
         environment: development
-    # Added from fks-namespaces.yaml
-    - name: fks-development
+    # Added from fks_namespaces.yaml
+    - name: fks_development
       labels:
-        name: fks-development
+        name: fks_development
         environment: development
-    - name: fks-staging
+    - name: fks_staging
       labels:
-        name: fks-staging
+        name: fks_staging
         environment: staging
-    - name: fks-production
+    - name: fks_production
       labels:
-        name: fks-production
+        name: fks_production
         environment: production

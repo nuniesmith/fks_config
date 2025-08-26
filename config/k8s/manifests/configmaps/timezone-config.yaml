@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: timezone-config
-  namespace: fks-development
+  namespace: fks_development
   labels:
     app: timezone-config
 data:

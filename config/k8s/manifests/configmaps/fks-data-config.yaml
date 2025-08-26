@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: fks-data-config
-  namespace: fks-development
+  name: fks_data-config
+  namespace: fks_development
 data:
   APP_LOG_LEVEL: info
   CONFIG_DIR: /app/config

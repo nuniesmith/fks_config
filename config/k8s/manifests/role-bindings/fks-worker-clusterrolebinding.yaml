@@ -5,7 +5,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: fks_worker-service-account
-  namespace: fks-development
+  namespace: fks_development
 roleRef:
   kind: ClusterRole
   name: fks_worker-clusterrole

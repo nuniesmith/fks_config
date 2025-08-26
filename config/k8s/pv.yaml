@@ -6,9 +6,9 @@ k8s:
       capacity: 10Gi
       accessModes: ["ReadWriteOnce"]
       hostPath: /data
-    # Added from fks-app-src-pv.yaml
-    - name: fks-app-src-pv
-      namespace: fks-development
+    # Added from fks_app-src-pv.yaml
+    - name: fks_app-src-pv
+      namespace: fks_development
       capacity: 1Gi
       accessModes: ["ReadWriteOnce"]
       hostPath: "fks/src"

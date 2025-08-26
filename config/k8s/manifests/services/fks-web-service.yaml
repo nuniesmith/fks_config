@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fks-web-service
-  namespace: fks-development
+  name: fks_web-service
+  namespace: fks_development
 spec:
   type: ClusterIP
   ports:
@@ -10,4 +10,4 @@ spec:
     port: 8084
     targetPort: 8084
   selector:
-    app: fks-web
+    app: fks_web

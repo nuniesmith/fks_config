@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: redis-config
-  namespace: fks-development
+  namespace: fks_development
 data:
   redis.conf: |
     # Redis configuration file

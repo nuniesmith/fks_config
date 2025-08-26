@@ -20,7 +20,7 @@ k8s:
           }
     # Added from alertmanager-configmap.yaml
     - name: alertmanager-config
-      namespace: fks-development
+      namespace: fks_development
       data:
         alertmanager.yml: |
           global:
@@ -32,8 +32,8 @@ k8s:
             receiver: 'default'
           receivers:
             - name: 'default'
-    - name: fks-api-config
-      namespace: fks-development
+    - name: fks_api-config
+      namespace: fks_development
       data:
         API_PORT: "8080"
         APP_LOG_LEVEL: "info"
@@ -44,8 +44,8 @@ k8s:
         SERVICE_RUNTIME: "python"
         SERVICE_TYPE: "api"
         TZ: "America/Toronto"
-    - name: fks-app-config
-      namespace: fks-development
+    - name: fks_app-config
+      namespace: fks_development
       data:
         APP_LOG_LEVEL: "info"
         CONFIG_DIR: "/app/config"
@@ -57,8 +57,8 @@ k8s:
         TZ: "America/Toronto"
         KEEP_CONTAINER_ALIVE: "true"
         TRADING_MODE: "paper"
-    - name: fks-data-config
-      namespace: fks-development
+    - name: fks_data-config
+      namespace: fks_development
       data:
         APP_LOG_LEVEL: "info"
         CONFIG_DIR: "/app/config"
@@ -69,8 +69,8 @@ k8s:
         SERVICE_TYPE: "data"
         TZ: "America/Toronto"
         KEEP_CONTAINER_ALIVE: "true"
-    - name: fks-pine-config
-      namespace: fks-development
+    - name: fks_pine-config
+      namespace: fks_development
       data:
         APP_LOG_LEVEL: "info"
         CONFIG_DIR: "/app/config"
@@ -82,8 +82,8 @@ k8s:
         TZ: "America/Toronto"
         KEEP_CONTAINER_ALIVE: "true"
         SYMBOL: "BTCUSD"
-    - name: fks-training-config
-      namespace: fks-development
+    - name: fks_training-config
+      namespace: fks_development
       data:
         APP_LOG_LEVEL: "info"
         CONFIG_DIR: "/app/config"
@@ -96,8 +96,8 @@ k8s:
         MPLCONFIGDIR: "/tmp/mpl_config"
         KEEP_CONTAINER_ALIVE: "true"
         TRAINING_EPOCHS: "50"
-    - name: fks-watcher-config
-      namespace: fks-development
+    - name: fks_watcher-config
+      namespace: fks_development
       data:
         APP_LOG_LEVEL: "info"
         CONFIG_DIR: "/app/config"
@@ -110,8 +110,8 @@ k8s:
         MPLCONFIGDIR: "/tmp/mpl_config"
         KEEP_CONTAINER_ALIVE: "true"
         MONITOR_INTERVAL: "30"
-    - name: fks-web-config
-      namespace: fks-development
+    - name: fks_web-config
+      namespace: fks_development
       data:
         APP_LOG_LEVEL: "info"
         CONFIG_DIR: "/app/config"
@@ -125,7 +125,7 @@ k8s:
         WEB_HOST: "0.0.0.0"
         WEB_PORT: "8084"
     - name: fks_worker-config
-      namespace: fks-development
+      namespace: fks_development
       data:
         APP_LOG_LEVEL: "info"
         CONFIG_DIR: "/app/config"
@@ -139,7 +139,7 @@ k8s:
         WORKER_COUNT: "2"
     # Added from redis-configmap.yaml
     - name: redis-config
-      namespace: fks-development
+      namespace: fks_development
       data:
         redis.conf: |
           # Redis configuration file
@@ -167,7 +167,7 @@ k8s:
           replica-read-only yes
     # Added from timezone-configmap.yaml
     - name: timezone-config
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: timezone-config
       data:

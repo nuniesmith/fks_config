@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: prometheus-logs-pvc
-  namespace: fks-development
+  namespace: fks_development
   labels:
     app: prometheus
 spec:

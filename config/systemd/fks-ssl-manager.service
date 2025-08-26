@@ -13,8 +13,8 @@ Environment=DOMAIN=fkstrading.xyz
 Environment=LETSENCRYPT_EMAIL=nunie.smith01@gmail.com
 Environment=WEBROOT_PATH=/var/www/html
 Environment=STAGING=false
-ExecStart=/usr/local/bin/fks-ssl-manager.sh install
-ExecReload=/usr/local/bin/fks-ssl-manager.sh renew
+ExecStart=/usr/local/bin/fks_ssl-manager.sh install
+ExecReload=/usr/local/bin/fks_ssl-manager.sh renew
 StandardOutput=journal
 StandardError=journal
 TimeoutSec=300

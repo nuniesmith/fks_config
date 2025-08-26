@@ -11,22 +11,22 @@ scrape_configs:
     static_configs:
       - targets: ["redis:6379"]
 
-  - job_name: "fks-api"
+  - job_name: "fks_api"
     metrics_path: /metrics
     static_configs:
       - targets: ["api:8000"]
 
-  - job_name: "fks-data"
+  - job_name: "fks_data"
     metrics_path: /metrics
     static_configs:
       - targets: ["data:9001"]
 
-  - job_name: "fks-engine"
+  - job_name: "fks_engine"
     metrics_path: /metrics
     static_configs:
       - targets: ["engine:9010"]
 
-  - job_name: "fks-transformer"
+  - job_name: "fks_transformer"
     metrics_path: /metrics
     static_configs:
       - targets: ["transformer:8089"]

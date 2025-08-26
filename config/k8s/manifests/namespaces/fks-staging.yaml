@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: fks-staging
+  name: fks_staging
   labels:
-    name: fks-staging
+    name: fks_staging
     environment: staging

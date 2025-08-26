@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fks-data-service
-  namespace: fks-development
+  name: fks_data-service
+  namespace: fks_development
 spec:
   type: ClusterIP
   ports:
@@ -10,4 +10,4 @@ spec:
     port: 8082
     targetPort: 8082
   selector:
-    app: fks-data
+    app: fks_data

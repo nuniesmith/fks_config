@@ -1,22 +1,22 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: fks-development
+namespace: fks_development
 
 resources:
-  - ../../namespaces/fks-namespaces.yaml
+  - ../../namespaces/fks_namespaces.yaml
   - ../../sa/service-accounts.yaml
-  - ../../cluster-roles/fks-cluster-roles.yaml
-  - ../../cluster-role-bindings/fks-cluster-role-bindings.yaml
-  - ../../configmaps/fks-app-configmaps.yaml
-  - ../../secrets/fks-secrets.yaml
-  - ../../storage/fks-pvcs.yaml
-  - ../../services/fks-services.yaml
-  - ../../ingresses/fks-ingresses.yaml
-  - ../../workloads/infrastructure/fks-infra-deployments.yaml
-  - ../../workloads/applications/fks-app-deployments.yaml
+  - ../../cluster-roles/fks_cluster-roles.yaml
+  - ../../cluster-role-bindings/fks_cluster-role-bindings.yaml
+  - ../../configmaps/fks_app-configmaps.yaml
+  - ../../secrets/fks_secrets.yaml
+  - ../../storage/fks_pvcs.yaml
+  - ../../services/fks_services.yaml
+  - ../../ingresses/fks_ingresses.yaml
+  - ../../workloads/infrastructure/fks_infra-deployments.yaml
+  - ../../workloads/applications/fks_app-deployments.yaml
   - ../../workloads/workers/fks_worker-pine-deployments.yaml
-  - ../../workloads/gpu/fks-gpu-deployments.yaml
+  - ../../workloads/gpu/fks_gpu-deployments.yaml
 
 # Image tags for development environment
 images:
@@ -57,7 +57,7 @@ patchesStrategicMerge:
     apiVersion: v1
     kind: ConfigMap
     metadata:
-      name: fks-api-config
+      name: fks_api-config
     data:
       APP_LOG_LEVEL: "debug"
 
@@ -65,7 +65,7 @@ patchesStrategicMerge:
     apiVersion: v1
     kind: ConfigMap
     metadata:
-      name: fks-app-config
+      name: fks_app-config
     data:
       APP_LOG_LEVEL: "debug"
       TRADING_MODE: "paper"

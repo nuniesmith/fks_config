@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fks-training-service
-  namespace: fks-development
+  name: fks_training-service
+  namespace: fks_development
 spec:
   type: ClusterIP
   ports:
@@ -10,4 +10,4 @@ spec:
     port: 8086
     targetPort: 8086
   selector:
-    app: fks-training
+    app: fks_training

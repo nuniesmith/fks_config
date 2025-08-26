@@ -69,7 +69,7 @@ security:
     algorithm: HS256
     access_token_expire_minutes: ${JWT_ACCESS_EXPIRE:15}
     refresh_token_expire_minutes: ${JWT_REFRESH_EXPIRE:1440}
-    issuer: "fks-trading-api"
+    issuer: "fks_trading-api"
 
   # API Key Authentication
   api_key:

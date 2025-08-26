@@ -68,7 +68,7 @@ docker:
     
   # Network configuration
   networks:
-    - name: "fks-network"
+    - name: "fks_network"
       driver: "bridge"
       internal: false
     - name: "frontend"
@@ -383,7 +383,7 @@ kubernetes:
     className: "nginx"
     tls:
       enabled: "${ENABLE_SSL:-false}"
-      secretName: "fks-tls"
+      secretName: "fks_tls"
     annotations:
       cert-manager.io/cluster-issuer: "letsencrypt-prod"
       nginx.ingress.kubernetes.io/rate-limit: "100"

@@ -2,4 +2,4 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: nginx-ingress-sa
-  namespace: fks-development
+  namespace: fks_development

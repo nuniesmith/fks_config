@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fks-api
-  namespace: fks-development
+  name: fks_api
+  namespace: fks_development
   labels:
-    app: fks-api
+    app: fks_api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fks-api
+      app: fks_api
   template:
     metadata:
       labels:
-        app: fks-api
+        app: fks_api
     spec:
-      serviceAccountName: fks-api-service-account
+      serviceAccountName: fks_api-service-account
       containers:
-        - name: fks-api
+        - name: fks_api
           image: ${API_IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           command: ["python", "-m", "main", "service", "api"]
@@ -25,7 +25,7 @@ spec:
             - containerPort: 8080
           envFrom:
             - configMapRef:
-                name: fks-api-config
+                name: fks_api-config
           resources:
             limits:
               cpu: "2"
@@ -53,23 +53,23 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fks-app
-  namespace: fks-development
+  name: fks_app
+  namespace: fks_development
   labels:
-    app: fks-app
+    app: fks_app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fks-app
+      app: fks_app
   template:
     metadata:
       labels:
-        app: fks-app
+        app: fks_app
     spec:
-      serviceAccountName: fks-app-service-account
+      serviceAccountName: fks_app-service-account
       containers:
-        - name: fks-app
+        - name: fks_app
           image: ${APP_IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           command: ["python", "-m", "main", "service", "app"]
@@ -77,7 +77,7 @@ spec:
             - containerPort: 8083
           envFrom:
             - configMapRef:
-                name: fks-app-config
+                name: fks_app-config
           env:
             - name: POSTGRES_HOST
               value: "postgres-service"
@@ -120,28 +120,28 @@ spec:
           emptyDir: {}
         - name: app-data
           persistentVolumeClaim:
-            claimName: fks-app-data-pvc
+            claimName: fks_app-data-pvc
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fks-data
-  namespace: fks-development
+  name: fks_data
+  namespace: fks_development
   labels:
-    app: fks-data
+    app: fks_data
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fks-data
+      app: fks_data
   template:
     metadata:
       labels:
-        app: fks-data
+        app: fks_data
     spec:
-      serviceAccountName: fks-data-service-account
+      serviceAccountName: fks_data-service-account
       containers:
-        - name: fks-data
+        - name: fks_data
           image: ${DATA_IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           command: ["python", "-m", "main", "service", "data"]
@@ -149,7 +149,7 @@ spec:
             - containerPort: 8082
           envFrom:
             - configMapRef:
-                name: fks-data-config
+                name: fks_data-config
           env:
             - name: POSTGRES_HOST
               value: "postgres-service"
@@ -186,23 +186,23 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fks-pine
-  namespace: fks-development
+  name: fks_pine
+  namespace: fks_development
   labels:
-    app: fks-pine
+    app: fks_pine
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fks-pine
+      app: fks_pine
   template:
     metadata:
       labels:
-        app: fks-pine
+        app: fks_pine
     spec:
-      serviceAccountName: fks-pine-service-account
+      serviceAccountName: fks_pine-service-account
       containers:
-        - name: fks-pine
+        - name: fks_pine
           image: ${PINE_IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           command: ["python", "-m", "main", "service", "pine"]
@@ -210,7 +210,7 @@ spec:
             - containerPort: 8085
           envFrom:
             - configMapRef:
-                name: fks-pine-config
+                name: fks_pine-config
           resources:
             limits:
               cpu: "2"
@@ -239,7 +239,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: fks_worker
-  namespace: fks-development
+  namespace: fks_development
   labels:
     app: fks_worker
 spec:
@@ -306,23 +306,23 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fks-web
-  namespace: fks-development
+  name: fks_web
+  namespace: fks_development
   labels:
-    app: fks-web
+    app: fks_web
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fks-web
+      app: fks_web
   template:
     metadata:
       labels:
-        app: fks-web
+        app: fks_web
     spec:
-      serviceAccountName: fks-web-service-account
+      serviceAccountName: fks_web-service-account
       containers:
-        - name: fks-web
+        - name: fks_web
           image: ${WEB_IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           command: ["python", "-m", "main", "service", "web"]
@@ -330,7 +330,7 @@ spec:
             - containerPort: 8084
           envFrom:
             - configMapRef:
-                name: fks-web-config
+                name: fks_web-config
           resources:
             limits:
               cpu: "1"

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: grafana
-  namespace: fks-development
+  namespace: fks_development
   labels:
     app: grafana
 spec:

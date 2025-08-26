@@ -14,7 +14,7 @@ compute:
 mlflow:
   tracking_uri: ${MLFLOW_TRACKING_URI:http://mlflow:5000}
   experiment_name: fks_trading_models
-  artifact_location: ${MLFLOW_ARTIFACTS:s3://fks-mlflow/artifacts}
+  artifact_location: ${MLFLOW_ARTIFACTS:s3://fks_mlflow/artifacts}
   
 model_registry:
   backend: mlflow

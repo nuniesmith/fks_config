@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: fks_worker-data-pvc
-  namespace: fks-development
+  namespace: fks_development
 spec:
   accessModes:
   - ReadWriteMany

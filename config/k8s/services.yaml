@@ -30,7 +30,7 @@ k8s:
         app: postgres
     # Added from datadog-service.yaml
     - name: datadog
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: datadog
       type: ClusterIP
@@ -41,72 +41,72 @@ k8s:
           targetPort: 8126
       selector:
         app: datadog
-    # Added from fks-service.yaml
-    - name: fks-api-service
-      namespace: fks-development
+    # Added from fks_service.yaml
+    - name: fks_api-service
+      namespace: fks_development
       type: ClusterIP
       ports:
         - name: http
           port: 8080
           targetPort: 8080
       selector:
-        app: fks-api
-    - name: fks-app-service
-      namespace: fks-development
+        app: fks_api
+    - name: fks_app-service
+      namespace: fks_development
       type: ClusterIP
       ports:
         - name: http
           port: 8083
           targetPort: 8083
       selector:
-        app: fks-app
-    - name: fks-data-service
-      namespace: fks-development
+        app: fks_app
+    - name: fks_data-service
+      namespace: fks_development
       type: ClusterIP
       ports:
         - name: http
           port: 8082
           targetPort: 8082
       selector:
-        app: fks-data
-    - name: fks-pine-service
-      namespace: fks-development
+        app: fks_data
+    - name: fks_pine-service
+      namespace: fks_development
       type: ClusterIP
       ports:
         - name: http
           port: 8085
           targetPort: 8085
       selector:
-        app: fks-pine
-    - name: fks-training-service
-      namespace: fks-development
+        app: fks_pine
+    - name: fks_training-service
+      namespace: fks_development
       type: ClusterIP
       ports:
         - name: http
           port: 8086
           targetPort: 8086
       selector:
-        app: fks-training
-    - name: fks-watcher-service
-      namespace: fks-development
+        app: fks_training
+    - name: fks_watcher-service
+      namespace: fks_development
       type: ClusterIP
       ports:
         - name: http
           port: 8087
           targetPort: 8087
       selector:
-        app: fks-watcher
-    - name: fks-web-service
-      namespace: fks-development
+        app: fks_watcher
+    - name: fks_web-service
+      namespace: fks_development
       type: ClusterIP
       ports:
         - name: http
           port: 8084
           targetPort: 8084
       selector:
-        app: fks-web
+        app: fks_web
     - name: fks_worker-service
-      namespace: fks-development
+      namespace: fks_development
       type: ClusterIP
       ports:
         - name: http
@@ -116,7 +116,7 @@ k8s:
         app: fks_worker
     # Added from grafana-service.yaml
     - name: grafana
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: grafana
       type: ClusterIP
@@ -129,7 +129,7 @@ k8s:
         app: grafana
     # Added from kubernetes-dashboard-service.yaml
     - name: kubernetes-dashboard
-      namespace: fks-development
+      namespace: fks_development
       labels:
         k8s-app: kubernetes-dashboard
       type: ClusterIP
@@ -141,7 +141,7 @@ k8s:
         k8s-app: kubernetes-dashboard
     # Added from nginx-ingress-service.yaml
     - name: nginx-ingress-service
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: nginx-ingress-service
       type: NodePort
@@ -160,7 +160,7 @@ k8s:
         app: nginx-ingress
     # Added from postgres-exporter-service.yaml
     - name: postgres-exporter
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: postgres-exporter
       type: ClusterIP
@@ -173,7 +173,7 @@ k8s:
         app: postgres-exporter
     # Added from postgres-service.yaml
     - name: postgres
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: postgres
       type: ClusterIP
@@ -186,7 +186,7 @@ k8s:
         app: postgres
     # Added from prometheus-service.yaml
     - name: prometheus
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: prometheus
         component: monitoring
@@ -200,7 +200,7 @@ k8s:
         app: prometheus
     # Added from redis-exporter-service.yaml
     - name: redis-exporter
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: redis-exporter
       type: ClusterIP
@@ -213,7 +213,7 @@ k8s:
         app: redis-exporter
     # Added from redis-service.yaml
     - name: redis
-      namespace: fks-development
+      namespace: fks_development
       labels:
         app: redis
       type: ClusterIP

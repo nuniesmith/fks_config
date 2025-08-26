@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fks-training
-  namespace: fks-development
+  name: fks_training
+  namespace: fks_development
   labels:
-    app: fks-training
+    app: fks_training
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fks-training
+      app: fks_training
   template:
     metadata:
       labels:
-        app: fks-training
+        app: fks_training
     spec:
-      serviceAccountName: fks-training-service-account
+      serviceAccountName: fks_training-service-account
       containers:
-        - name: fks-training
+        - name: fks_training
           image: ${TRAINING_IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           command: ["python", "-m", "main", "service", "training"]
@@ -25,7 +25,7 @@ spec:
             - containerPort: 8086
           envFrom:
             - configMapRef:
-                name: fks-training-config
+                name: fks_training-config
           env:
             - name: POSTGRES_HOST
               value: "postgres-service"
@@ -67,29 +67,29 @@ spec:
       volumes:
         - name: model-storage
           persistentVolumeClaim:
-            claimName: fks-model-storage-pvc
+            claimName: fks_model-storage-pvc
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: fks-watcher
-  namespace: fks-development
+  name: fks_watcher
+  namespace: fks_development
   labels:
-    app: fks-watcher
+    app: fks_watcher
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: fks-watcher
+      app: fks_watcher
   template:
     metadata:
       labels:
-        app: fks-watcher
+        app: fks_watcher
     spec:
-      serviceAccountName: fks-watcher-service-account
+      serviceAccountName: fks_watcher-service-account
       containers:
-        - name: fks-watcher
+        - name: fks_watcher
           image: ${WATCHER_IMAGE_TAG}
           imagePullPolicy: IfNotPresent
           command: ["python", "-m", "main", "service", "watcher"]
@@ -97,7 +97,7 @@ spec:
             - containerPort: 8087
           envFrom:
             - configMapRef:
-                name: fks-watcher-config
+                name: fks_watcher-config
           resources:
             limits:
               nvidia.com/gpu: 1
