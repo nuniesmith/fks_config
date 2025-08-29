@@ -1,4 +1,0 @@
-services:
-  config:
-    environment:
-      RUST_LOG: info

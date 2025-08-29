@@ -1,4 +1,0 @@
-services:
-  config:
-    image: ${DOCKER_REGISTRY:-fkstrading}/fks_config:${CONFIG_VERSION:-latest}
-    pull_policy: always

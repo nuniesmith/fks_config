@@ -6,19 +6,19 @@ concurrency:
 
 on:
   push:
-    branches: [ main ]
     paths:
       - 'src/**'
       - 'config/**'
       - 'Cargo.toml'
-      - 'Dockerfile'
+      - 'Dockerfile*'
       - '.github/workflows/fks_config-ci.yml'
   pull_request:
-    branches: [ main ]
     paths:
       - 'src/**'
       - 'config/**'
       - 'Cargo.toml'
+      - 'Dockerfile*'
+      - '.github/workflows/fks_config-ci.yml'
       - 'Dockerfile'
       - '.github/workflows/fks_config-ci.yml'
   workflow_dispatch: {}
@@ -78,9 +78,9 @@ jobs:
         with:
           images: local/fks
           tags: |
-            type=ref,event=branch,prefix=${{ env.SERVICE_SLUG }}-
-            type=sha,prefix=${{ env.SERVICE_SLUG }}-
-            type=raw,value=${{ env.SERVICE_SLUG }}-latest
+            type=ref,event=branch,prefix=config-
+            type=sha,prefix=config-
+            type=raw,value=config-latest
 
       - name: Build image (no push)
         uses: docker/build-push-action@v5
