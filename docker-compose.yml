@@ -2,7 +2,11 @@ services:
   fks_config:
     build:
       context: .
-      dockerfile: shared/shared_docker/templates/Dockerfile.rust
+      dockerfile: ../shared/shared_docker/templates/Dockerfile.rust
+      args:
+        SERVICE_NAME: fks_config
+        SERVICE_TYPE: engine
+        SERVICE_PORT: 4800
     working_dir: /app
     environment:
       TZ: America/Toronto
@@ -23,6 +27,7 @@ services:
       timeout: 5s
       retries: 3
       start_period: 20s
+    command: ["serve", "--port", "4800"]
 
 volumes:
   rust_target:

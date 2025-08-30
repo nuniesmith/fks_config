@@ -22,12 +22,12 @@ hyper = { version = "1", optional = true }
 serde_path_to_error = "0.1"
 
 # Shared Rust utilities (added when submodule present at shared/rust)
-shared_rust = { path = "shared/rust", optional = true }
+# shared_rust = { path = "shared/rust", optional = true }
 
 [dev-dependencies]
 tempfile = "3"
 
 [features]
-default = []
+default = ["server"]
 server = ["axum", "tokio", "hyper"]
-shared = ["shared_rust"] # enable once shared/rust submodule initialized
+shared = [] # ["shared_rust"] # enable once shared/rust submodule initialized
