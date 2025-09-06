@@ -3,7 +3,7 @@ services:
     build:
       context: .
       # Normalized path to match other services (local shared/)
-      dockerfile: shared/shared_docker/templates/Dockerfile.rust
+      dockerfile: shared/docker/templates/Dockerfile.rust
       args:
         SERVICE_NAME: fks_config
         SERVICE_TYPE: engine
