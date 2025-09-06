@@ -44,7 +44,7 @@
     "logging": {
         "level": "INFO",
         "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        "file_path": "./logs/fks_monitor.log",
+        "file_path": "./logs/fks_master.log",
         "max_file_size": "10MB",
         "backup_count": 3
     }
