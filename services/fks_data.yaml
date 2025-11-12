@@ -1,0 +1,59 @@
+# FKS Data Service Configuration
+# Central config location: repo/main/config/services/fks_data.yaml
+
+service:
+  name: fks_data
+  port: 8003
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies: []  # No dependencies
+
+redis:
+  host: ${REDIS_HOST:-redis}
+  port: ${REDIS_PORT:-6379}
+  db: 2
+  password: ""  # Use env var: REDIS_PASSWORD
+  cache_ttl: 300  # 5 minutes
+
+api:
+  timeout: 30
+  retries: 3
+  rate_limit: 1000
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+paths:
+  logs: /app/logs  # Inside container
+  data: /app/data
+  cache: /app/cache
+
+features:
+  caching: true
+  webhooks: true
+  multi_provider: true
+
+service_specific:
+  adapters:
+    binance:
+      enabled: true
+      api_key: ""  # Use env var: BINANCE_API_KEY
+      api_secret: ""  # Use env var: BINANCE_API_SECRET
+      cache_ttl: 300
+    polygon:
+      enabled: true
+      api_key: ""  # Use env var: POLYGON_API_KEY
+      cache_ttl: 300
+    yahoo:
+      enabled: true
+      cache_ttl: 300
+  webhooks:
+    enabled: true
+    verify_signatures: true
+    timeout: 10
+

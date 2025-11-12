@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "updated": "2025-11-08T08:21:21.379112",
+  "redis": {
+    "host": "redis",
+    "port": 6379,
+    "db": 0,
+    "ttl_default": 3600
+  },
+  "services": {
+    "fks_api": {
+      "enabled": true,
+      "cache_routes": [
+        "/api/v1/data",
+        "/api/v1/assets"
+      ],
+      "ttl": 300
+    },
+    "fks_data": {
+      "enabled": true,
+      "cache_queries": true,
+      "ttl": 600
+    },
+    "fks_app": {
+      "enabled": true,
+      "cache_features": true,
+      "ttl": 1800
+    }
+  }
+}

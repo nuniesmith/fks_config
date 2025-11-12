@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "updated": "2025-11-08T08:21:53.113230",
+  "severity_levels": {
+    "P0": {
+      "name": "Critical",
+      "response_time_minutes": 0,
+      "resolution_time_hours": 1
+    },
+    "P1": {
+      "name": "High",
+      "response_time_minutes": 15,
+      "resolution_time_hours": 4
+    },
+    "P2": {
+      "name": "Medium",
+      "response_time_minutes": 60,
+      "resolution_time_hours": 24
+    },
+    "P3": {
+      "name": "Low",
+      "response_time_minutes": 240,
+      "resolution_time_hours": 72
+    }
+  },
+  "escalation": {
+    "levels": [
+      {
+        "level": 1,
+        "role": "oncall-engineer",
+        "timeout_minutes": 15
+      },
+      {
+        "level": 2,
+        "role": "team-lead",
+        "timeout_minutes": 60
+      },
+      {
+        "level": 3,
+        "role": "engineering-manager",
+        "timeout_minutes": 120
+      }
+    ]
+  },
+  "communication": {
+    "channels": {
+      "internal": "#incidents",
+      "external": "status.fkstrading.xyz"
+    }
+  }
+}

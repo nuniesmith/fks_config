@@ -1,0 +1,65 @@
+# FKS Portfolio Service Configuration
+# Central config location: repo/main/config/services/fks_portfolio.yaml
+
+service:
+  name: fks_portfolio
+  port: 8012
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies:
+  fks_data:
+    base_url: http://fks_data:8003
+    health_url: http://fks_data:8003/health
+  fks_ai:
+    base_url: http://fks_ai:8007
+    health_url: http://fks_ai:8007/health
+
+database:
+  host: ${POSTGRES_HOST:-postgres}
+  port: ${POSTGRES_PORT:-5432}
+  name: ${POSTGRES_DB:-trading_db}
+  user: ${POSTGRES_USER:-postgres}
+  password: ""  # Use env var: POSTGRES_PASSWORD
+
+api:
+  timeout: 60
+  retries: 3
+  rate_limit: 100
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+paths:
+  logs: /app/logs  # Inside container
+  data: /app/data
+  cache: /app/data/cache
+  historical: /app/data/historical
+
+features:
+  btc_conversion: true
+  optimization: true
+  rebalancing: true
+  allocation_tracking: true
+
+service_specific:
+  portfolio:
+    target_btc_allocation: 0.50  # 50%
+    rebalancing_threshold: 0.05  # 5% drift
+    rebalancing_frequency: quarterly
+  allocation:
+    stocks: 0.50
+    etfs: 0.15
+    commodities: 0.15
+    crypto: 0.10
+    futures: 0.05
+    cash: 0.05
+  esg:
+    enabled: true
+    target_allocation: 0.25  # 25%
+    exclude_fossil_fuels: true
+

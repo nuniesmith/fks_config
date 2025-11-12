@@ -1,0 +1,15 @@
+[package]
+name = "fks-config"
+version = "0.1.0"
+edition = "2021"
+description = "FKS Standard Configuration Loader for Rust Services"
+license = "MIT"
+authors = ["FKS Trading Platform <dev@fkstrading.xyz>"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.9"
+
+[dev-dependencies]
+# Add test dependencies if needed
+

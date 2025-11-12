@@ -1,0 +1,73 @@
+# FKS App Service Configuration
+# Central config location: repo/main/config/services/fks_app.yaml
+
+service:
+  name: fks_app
+  port: 8002
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies:
+  fks_api:
+    base_url: http://fks_api:8001
+    health_url: http://fks_api:8001/health
+  fks_data:
+    base_url: http://fks_data:8003
+    health_url: http://fks_data:8003/health
+  fks_ai:
+    base_url: http://fks_ai:8007
+    health_url: http://fks_ai:8007/health
+  fks_execution:
+    base_url: http://fks_execution:8004
+    health_url: http://fks_execution:8004/health
+
+database:
+  host: ${POSTGRES_HOST:-postgres}
+  port: ${POSTGRES_PORT:-5432}
+  name: ${POSTGRES_DB:-trading_db}
+  user: ${POSTGRES_USER:-postgres}
+  password: ""  # Use env var: POSTGRES_PASSWORD
+
+redis:
+  host: ${REDIS_HOST:-redis}
+  port: ${REDIS_PORT:-6379}
+  db: 1
+  password: ""  # Use env var: REDIS_PASSWORD
+
+api:
+  timeout: 60
+  retries: 3
+  rate_limit: 200
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+paths:
+  logs: /app/logs  # Inside container
+  data: /app/data
+  models: /app/models
+  cache: /app/cache
+
+features:
+  signal_generation: true
+  backtesting: true
+  portfolio_optimization: true
+
+service_specific:
+  strategies:
+    enabled:
+      - asmbtr
+      - rsi
+      - macd
+      - ema
+    default: asmbtr
+  signals:
+    ai_enhancement: true
+    categorization: true
+    position_sizing: true
+    risk_percentage: 0.02  # 2%
+

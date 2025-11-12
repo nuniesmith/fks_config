@@ -1,0 +1,46 @@
+# FKS Monitor Service Configuration
+# Central config location: repo/main/config/services/fks_monitor.yaml
+
+service:
+  name: fks_monitor
+  port: 8013
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies:
+  all: true  # Monitors all services
+
+api:
+  timeout: 10
+  retries: 2
+  rate_limit: 1000
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+paths:
+  logs: /app/logs  # Inside container
+  config: /app/config
+
+features:
+  health_checks: true
+  metrics_collection: true
+  alerting: true
+  service_discovery: true
+
+service_specific:
+  prometheus:
+    url: ${PROMETHEUS_URL:-http://prometheus:9090}
+    scrape_interval: 30
+  grafana:
+    url: ${GRAFANA_URL:-http://grafana:3000}
+  health_checks:
+    interval: 30  # seconds
+    timeout: 5
+    retries: 3
+  services_config: /app/config/services.yaml  # From volume mount
+

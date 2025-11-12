@@ -1,0 +1,66 @@
+# FKS Microservices Base Configuration
+# This is a template configuration file for FKS services
+# Copy and customize for each service
+
+service:
+  name: fks_service  # Replace with actual service name (e.g., fks_api, fks_data)
+  port: 8000  # Replace with actual service port
+  host: "0.0.0.0"
+  environment: development  # development, staging, production, test
+  log_level: INFO  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+
+# Database configuration (optional, if service uses database)
+database:
+  host: localhost
+  port: 5432
+  name: fks_db
+  user: fks_user
+  password: ""  # Use environment variable FKS_DATABASE_PASSWORD in production
+  pool_size: 10
+  max_overflow: 20
+
+# Redis configuration (optional, if service uses Redis)
+redis:
+  host: localhost
+  port: 6379
+  db: 0
+  password: ""  # Use environment variable FKS_REDIS_PASSWORD in production
+  decode_responses: true
+
+# API configuration (optional, if service makes API calls)
+api:
+  base_url: "http://localhost:8000"
+  timeout: 30
+  retry_attempts: 3
+  retry_delay: 1
+
+# Authentication configuration (optional, if service uses auth)
+auth:
+  secret_key: ""  # Use environment variable FKS_AUTH_SECRET_KEY in production
+  token_expiry: 3600
+  algorithm: HS256
+
+# Monitoring configuration
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+# Paths configuration
+paths:
+  data_dir: "./data"
+  logs_dir: "./logs"
+  cache_dir: "./cache"
+  models_dir: "./models"
+
+# Feature flags
+features:
+  # Add service-specific feature flags here
+  # Example: enable_feature_x: true
+
+# Service-specific configuration
+service_specific:
+  # Add service-specific configuration here
+  # This section is not validated by the base schema
+  # Each service can define its own structure
+

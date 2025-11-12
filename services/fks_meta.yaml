@@ -1,0 +1,50 @@
+# FKS Meta Service Configuration
+# Central config location: repo/main/config/services/fks_meta.yaml
+
+service:
+  name: fks_meta
+  port: 8005
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies:
+  fks_execution:
+    base_url: http://fks_execution:8004
+    health_url: http://fks_execution:8004/health
+  fks_data:
+    base_url: http://fks_data:8003
+    health_url: http://fks_data:8003/health
+
+api:
+  timeout: 30
+  retries: 3
+  rate_limit: 100
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+paths:
+  logs: /app/logs  # Inside container
+  data: /app/data
+
+features:
+  mt5_integration: true
+  order_execution: true
+
+service_specific:
+  mt5:
+    terminal_path: ${MT5_TERMINAL_PATH:-}
+    data_path: ${MT5_DATA_PATH:-}
+    account_number: ${MT5_ACCOUNT_NUMBER:-}
+    password: ""  # Use env var: MT5_PASSWORD
+    server: ${MT5_SERVER:-}
+    symbol_prefix: ${MT5_SYMBOL_PREFIX:-}
+    timeout_ms: 5000
+    retry_attempts: 3
+    retry_delay_ms: 1000
+    testnet: ${MT5_TESTNET:-false}
+

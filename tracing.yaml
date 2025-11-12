@@ -1,0 +1,27 @@
+# Distributed Tracing Configuration
+# Uses OpenTelemetry/Jaeger for request tracing
+
+tracing:
+  enabled: true
+  provider: jaeger
+  endpoint: http://jaeger:14268/api/traces
+  service_name: fks-service
+  sampling_rate: 0.1  # 10% of requests
+  
+# Headers to propagate
+headers:
+  - traceparent
+  - tracestate
+  - x-request-id
+  
+# Services to trace
+services:
+  - fks_api
+  - fks_app
+  - fks_data
+  - fks_execution
+  - fks_web
+  - fks_ai
+  - fks_analyze
+  - fks_monitor
+  - fks_main

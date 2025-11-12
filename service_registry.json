@@ -1,0 +1,151 @@
+{
+  "version": "1.2",
+  "updated": "2025-11-12T00:00:00.000000",
+  "services": {
+    "fks_web": {
+      "name": "fks_web",
+      "port": 3001,
+      "port_docker": 8000,
+      "base_url": "http://fks-web:3001",
+      "health_url": "http://fks-web:3001/health",
+      "dependencies": [
+        "fks_api",
+        "fks_auth"
+      ],
+      "note": "Port 3001 in Kubernetes, port 8000 in Docker"
+    },
+    "fks_api": {
+      "name": "fks_api",
+      "port": 8001,
+      "base_url": "http://fks-api:8001",
+      "health_url": "http://fks-api:8001/health",
+      "dependencies": [
+        "fks_data",
+        "fks_auth"
+      ]
+    },
+    "fks_app": {
+      "name": "fks_app",
+      "port": 8002,
+      "base_url": "http://fks-app:8002",
+      "health_url": "http://fks-app:8002/health",
+      "dependencies": [
+        "fks_api",
+        "fks_data",
+        "fks_ai"
+      ]
+    },
+    "fks_data": {
+      "name": "fks_data",
+      "port": 8003,
+      "base_url": "http://fks-data:8003",
+      "health_url": "http://fks-data:8003/health",
+      "dependencies": []
+    },
+    "fks_execution": {
+      "name": "fks_execution",
+      "port": 8004,
+      "base_url": "http://fks-execution:8004",
+      "health_url": "http://fks-execution:8004/health",
+      "dependencies": [
+        "fks_api",
+        "fks_data"
+      ],
+      "plugins": [
+        "fks_meta",
+        "fks_ninja"
+      ]
+    },
+    "fks_meta": {
+      "name": "fks_meta",
+      "port": 8005,
+      "base_url": "http://fks-meta:8005",
+      "health_url": "http://fks-meta:8005/health",
+      "dependencies": [
+        "fks_execution",
+        "fks_data"
+      ]
+    },
+    "fks_ninja": {
+      "name": "fks_ninja",
+      "port": 8006,
+      "base_url": "http://fks-ninja:8006",
+      "health_url": "http://fks-ninja:8006/health",
+      "dependencies": [
+        "fks_execution",
+        "fks_data"
+      ],
+      "note": "Python/Rust API service communicating with NinjaTrader8 via TCP sockets (port 8080). NinjaTrader8 runs separately on Windows desktop (100.80.141.117:8080)."
+    },
+    "fks_ai": {
+      "name": "fks_ai",
+      "port": 8007,
+      "base_url": "http://fks-ai:8007",
+      "health_url": "http://fks-ai:8007/health",
+      "dependencies": [
+        "fks_data"
+      ],
+      "gpu_enabled": true,
+      "note": "GPU support enabled (1x nvidia.com/gpu)"
+    },
+    "fks_analyze": {
+      "name": "fks_analyze",
+      "port": 8008,
+      "base_url": "http://fks-analyze:8008",
+      "health_url": "http://fks-analyze:8008/health",
+      "dependencies": [
+        "fks_data",
+        "fks_ai"
+      ]
+    },
+    "fks_auth": {
+      "name": "fks_auth",
+      "port": 8009,
+      "base_url": "http://fks-auth:8009",
+      "health_url": "http://fks-auth:8009/health",
+      "dependencies": []
+    },
+    "fks_main": {
+      "name": "fks_main",
+      "port": 8010,
+      "base_url": "http://fks-main:8010",
+      "health_url": "http://fks-main:8010/health",
+      "dependencies": [
+        "fks_monitor"
+      ],
+      "language": "Rust",
+      "framework": "Axum",
+      "note": "Rust-based orchestration and management service"
+    },
+    "fks_training": {
+      "name": "fks_training",
+      "port": 8011,
+      "base_url": "http://fks-training:8011",
+      "health_url": "http://fks-training:8011/health",
+      "dependencies": [
+        "fks_data",
+        "fks_ai"
+      ]
+    },
+    "fks_portfolio": {
+      "name": "fks_portfolio",
+      "port": 8012,
+      "base_url": "http://fks-portfolio:8012",
+      "health_url": "http://fks-portfolio:8012/health",
+      "dependencies": [
+        "fks_data",
+        "fks_ai"
+      ]
+    },
+    "fks_monitor": {
+      "name": "fks_monitor",
+      "port": 8013,
+      "base_url": "http://fks-monitor:8013",
+      "health_url": "http://fks-monitor:8013/health",
+      "dependencies": [
+        "all"
+      ],
+      "note": "Monitors all FKS services and provides unified API for fks_main orchestration"
+    }
+  }
+}

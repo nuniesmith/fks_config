@@ -1,0 +1,227 @@
+{
+  "$schema": "http://json-schema.org/draft-2020-12/schema",
+  "$id": "https://fkstrading.xyz/schemas/fks-config/v1.0.0",
+  "title": "FKS Microservices Configuration Schema",
+  "description": "Standard configuration schema for all FKS microservices",
+  "type": "object",
+  "required": ["service"],
+  "properties": {
+    "service": {
+      "type": "object",
+      "required": ["name", "port"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^fks_[a-z]+$",
+          "description": "Service name (e.g., fks_api, fks_data)"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535,
+          "description": "Service port number"
+        },
+        "host": {
+          "type": "string",
+          "default": "0.0.0.0",
+          "description": "Service host address"
+        },
+        "environment": {
+          "type": "string",
+          "enum": ["development", "staging", "production", "test"],
+          "default": "development",
+          "description": "Environment name"
+        },
+        "log_level": {
+          "type": "string",
+          "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+          "default": "INFO",
+          "description": "Logging level"
+        }
+      }
+    },
+    "database": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string",
+          "default": "localhost",
+          "description": "Database host"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "default": 5432,
+          "description": "Database port"
+        },
+        "name": {
+          "type": "string",
+          "description": "Database name"
+        },
+        "user": {
+          "type": "string",
+          "description": "Database user"
+        },
+        "password": {
+          "type": "string",
+          "description": "Database password (use env var in production)"
+        },
+        "pool_size": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10,
+          "description": "Connection pool size"
+        },
+        "max_overflow": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 20,
+          "description": "Max connection pool overflow"
+        }
+      }
+    },
+    "redis": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string",
+          "default": "localhost",
+          "description": "Redis host"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "default": 6379,
+          "description": "Redis port"
+        },
+        "db": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Redis database number"
+        },
+        "password": {
+          "type": "string",
+          "description": "Redis password (use env var in production)"
+        },
+        "decode_responses": {
+          "type": "boolean",
+          "default": true,
+          "description": "Decode responses as strings"
+        }
+      }
+    },
+    "api": {
+      "type": "object",
+      "properties": {
+        "base_url": {
+          "type": "string",
+          "description": "Base URL for API endpoints"
+        },
+        "timeout": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 30,
+          "description": "API request timeout in seconds"
+        },
+        "retry_attempts": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 3,
+          "description": "Number of retry attempts"
+        },
+        "retry_delay": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 1,
+          "description": "Retry delay in seconds"
+        }
+      }
+    },
+    "auth": {
+      "type": "object",
+      "properties": {
+        "secret_key": {
+          "type": "string",
+          "description": "Authentication secret key (use env var in production)"
+        },
+        "token_expiry": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 3600,
+          "description": "Token expiry time in seconds"
+        },
+        "algorithm": {
+          "type": "string",
+          "enum": ["HS256", "HS384", "HS512"],
+          "default": "HS256",
+          "description": "JWT algorithm"
+        }
+      }
+    },
+    "monitoring": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable monitoring"
+        },
+        "prometheus_port": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 65535,
+          "default": 9090,
+          "description": "Prometheus metrics port"
+        },
+        "health_check_interval": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 30,
+          "description": "Health check interval in seconds"
+        }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "properties": {
+        "data_dir": {
+          "type": "string",
+          "default": "./data",
+          "description": "Data directory path"
+        },
+        "logs_dir": {
+          "type": "string",
+          "default": "./logs",
+          "description": "Logs directory path"
+        },
+        "cache_dir": {
+          "type": "string",
+          "default": "./cache",
+          "description": "Cache directory path"
+        },
+        "models_dir": {
+          "type": "string",
+          "default": "./models",
+          "description": "Models directory path"
+        }
+      }
+    },
+    "features": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      },
+      "description": "Feature flags"
+    },
+    "service_specific": {
+      "type": "object",
+      "description": "Service-specific configuration (structure varies by service)",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}
+

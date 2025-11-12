@@ -1,0 +1,64 @@
+{
+  "version": "1.0",
+  "updated": "2025-11-08T08:21:38.763739",
+  "rotation": {
+    "type": "weekly",
+    "team": [
+      {
+        "name": "Primary",
+        "email": "primary@fks.trading"
+      },
+      {
+        "name": "Secondary",
+        "email": "secondary@fks.trading"
+      }
+    ]
+  },
+  "escalation": {
+    "levels": [
+      {
+        "level": 1,
+        "timeout_minutes": 5,
+        "notify": [
+          "oncall-primary"
+        ]
+      },
+      {
+        "level": 2,
+        "timeout_minutes": 15,
+        "notify": [
+          "oncall-primary",
+          "oncall-secondary"
+        ]
+      },
+      {
+        "level": 3,
+        "timeout_minutes": 30,
+        "notify": [
+          "oncall-primary",
+          "oncall-secondary",
+          "team-lead"
+        ]
+      }
+    ]
+  },
+  "services": {
+    "critical": [
+      "fks_monitor",
+      "fks_main",
+      "fks_api"
+    ],
+    "high": [
+      "fks_data",
+      "fks_execution"
+    ],
+    "medium": [
+      "fks_web",
+      "fks_app"
+    ],
+    "low": [
+      "fks_ai",
+      "fks_analyze"
+    ]
+  }
+}

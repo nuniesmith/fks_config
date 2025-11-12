@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "updated": "2025-11-08T08:21:21.379324",
+  "targets": {
+    "fks_api": {
+      "p50_latency_ms": 50,
+      "p95_latency_ms": 200,
+      "p99_latency_ms": 500,
+      "throughput_rps": 1000,
+      "error_rate_percent": 0.1
+    },
+    "fks_data": {
+      "p50_latency_ms": 100,
+      "p95_latency_ms": 300,
+      "p99_latency_ms": 800,
+      "throughput_rps": 800,
+      "error_rate_percent": 0.5
+    },
+    "fks_execution": {
+      "p50_latency_ms": 200,
+      "p95_latency_ms": 500,
+      "p99_latency_ms": 1000,
+      "throughput_rps": 300,
+      "error_rate_percent": 1.0
+    }
+  }
+}

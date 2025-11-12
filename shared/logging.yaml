@@ -1,0 +1,68 @@
+# Shared Logging Configuration
+# Central config location: repo/main/config/shared/logging.yaml
+
+# Logging configuration for all services
+logging:
+  # Log location: Inside container at /app/logs (not mounted externally)
+  log_dir: /app/logs
+  
+  # Log levels
+  levels:
+    root: INFO
+    fks: INFO
+    fastapi: WARNING
+    uvicorn: INFO
+    django: INFO
+  
+  # Log format
+  format: json  # json or text
+  date_format: "%Y-%m-%d %H:%M:%S"
+  
+  # Log rotation
+  rotation:
+    enabled: true
+    max_bytes: 10485760  # 10MB
+    backup_count: 5
+    when: midnight
+    interval: 1
+  
+  # Log retention
+  retention:
+    days: 7  # Keep logs for 7 days
+    compress: true
+  
+  # Docker logging driver
+  docker:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+      compress: "true"
+  
+  # Structured logging
+  structured:
+    enabled: true
+    include_fields:
+      - timestamp
+      - level
+      - service
+      - message
+      - request_id
+      - user_id
+
+# Service-specific log paths (inside containers)
+service_logs:
+  fks_web: /app/logs/django.log
+  fks_api: /app/logs/api.log
+  fks_app: /app/logs/app.log
+  fks_data: /app/logs/data.log
+  fks_execution: /app/logs/execution.log
+  fks_ai: /app/logs/ai.log
+  fks_analyze: /app/logs/analyze.log
+  fks_auth: /app/logs/auth.log
+  fks_main: /app/logs/main.log
+  fks_meta: /app/logs/meta.log
+  fks_monitor: /app/logs/monitor.log
+  fks_training: /app/logs/training.log
+  fks_portfolio: /app/logs/portfolio.log
+

@@ -1,0 +1,73 @@
+# FKS Web Service Configuration
+# Central config location: repo/main/config/services/fks_web.yaml
+
+service:
+  name: fks_web
+  port: 8000
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies:
+  fks_api:
+    base_url: http://fks_api:8001
+    health_url: http://fks_api:8001/health
+  fks_app:
+    base_url: http://fks_app:8002
+    health_url: http://fks_app:8002/health
+  fks_execution:
+    base_url: http://fks_execution:8004
+    health_url: http://fks_execution:8004/health
+  fks_portfolio:
+    base_url: http://fks_portfolio:8012
+    health_url: http://fks_portfolio:8012/health
+
+database:
+  host: ${POSTGRES_HOST:-postgres}
+  port: ${POSTGRES_PORT:-5432}
+  name: ${POSTGRES_DB:-trading_db}
+  user: ${POSTGRES_USER:-postgres}
+  password: ""  # Use env var: POSTGRES_PASSWORD
+
+redis:
+  host: ${REDIS_HOST:-redis}
+  port: ${REDIS_PORT:-6379}
+  db: 0
+  password: ""  # Use env var: REDIS_PASSWORD
+
+api:
+  timeout: 30
+  retries: 3
+  rate_limit: 100  # requests per minute
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+paths:
+  logs: /app/logs  # Inside container, not mounted
+  data: /app/data
+  static: /app/staticfiles
+  media: /app/media
+
+features:
+  debug: ${DEBUG:-false}
+  collectstatic: true
+  migrations: true
+
+service_specific:
+  django:
+    secret_key: ""  # Use env var: DJANGO_SECRET_KEY
+    allowed_hosts:
+      - localhost
+      - 127.0.0.1
+      - ${DOMAIN:-fkstrading.xyz}
+    csrf_trusted_origins:
+      - http://localhost:8000
+      - https://${DOMAIN:-fkstrading.xyz}
+  static_files:
+    collect_on_startup: true
+    storage: staticfiles
+

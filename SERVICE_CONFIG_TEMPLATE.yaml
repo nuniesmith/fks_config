@@ -1,0 +1,65 @@
+# FKS Service Configuration Template
+# Copy this template to create a new service config: services/fks_<service>.yaml
+
+service:
+  name: fks_<service>  # Replace <service> with actual service name
+  port: <port>  # Replace with port from service_registry.json
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+# Copy dependencies section from service_registry.json
+dependencies:
+  # Example:
+  # fks_data:
+  #   base_url: http://fks_data:8003
+  #   health_url: http://fks_data:8003/health
+
+# Database (if needed)
+database:
+  host: ${POSTGRES_HOST:-postgres}
+  port: ${POSTGRES_PORT:-5432}
+  name: ${POSTGRES_DB:-trading_db}
+  user: ${POSTGRES_USER:-postgres}
+  password: ""  # Use env var: POSTGRES_PASSWORD
+
+# Redis (if needed)
+redis:
+  host: ${REDIS_HOST:-redis}
+  port: ${REDIS_PORT:-6379}
+  db: <db_number>  # Use unique DB number per service
+  password: ""  # Use env var: REDIS_PASSWORD
+  cache_ttl: 300  # 5 minutes default
+
+# API Configuration
+api:
+  timeout: 30
+  retries: 3
+  rate_limit: 100
+
+# Monitoring
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+# Paths (all inside container, not mounted externally)
+paths:
+  logs: /app/logs  # Inside container - access via docker logs
+  data: /app/data
+  cache: /app/cache
+  models: /app/models  # If needed
+
+# Feature Flags
+features:
+  # Add service-specific features here
+  feature_name: true
+
+# Service-Specific Configuration
+service_specific:
+  # Add service-specific settings here
+  # Example:
+  # custom_setting: value
+  # api_key: ""  # Use env var for secrets
+

@@ -1,0 +1,50 @@
+# FKS Main Service Configuration
+# Central config location: repo/main/config/services/fks_main.yaml
+
+service:
+  name: fks_main
+  port: 8010
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies:
+  fks_monitor:
+    base_url: http://fks_monitor:8013
+    health_url: http://fks_monitor:8013/health
+
+database:
+  host: ${POSTGRES_HOST:-postgres}
+  port: ${POSTGRES_PORT:-5432}
+  name: ${POSTGRES_DB:-trading_db}
+  user: ${POSTGRES_USER:-postgres}
+  password: ""  # Use env var: POSTGRES_PASSWORD
+
+api:
+  timeout: 30
+  retries: 3
+  rate_limit: 100
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+paths:
+  logs: /app/logs  # Inside container
+  data: /app/data
+
+features:
+  orchestration: true
+  service_coordination: true
+
+service_specific:
+  monitor:
+    url: ${MONITOR_URL:-http://fks_monitor:8013}
+  k8s:
+    namespace: ${K8S_NAMESPACE:-fks-trading}
+    domain: ${DOMAIN:-fkstrading.xyz}
+  tls:
+    enabled: ${TLS_ENABLED:-false}
+

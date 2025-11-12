@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "updated": "2025-11-08T08:21:38.763875",
+  "target": {
+    "max_toil_percent": 50,
+    "current_toil_percent": 0
+  },
+  "categories": {
+    "manual_deployments": {
+      "time_per_week_hours": 0,
+      "automation_status": "planned"
+    },
+    "manual_migrations": {
+      "time_per_week_hours": 0,
+      "automation_status": "planned"
+    },
+    "incident_response": {
+      "time_per_week_hours": 0,
+      "automation_status": "partial"
+    },
+    "manual_testing": {
+      "time_per_week_hours": 0,
+      "automation_status": "automated"
+    }
+  }
+}

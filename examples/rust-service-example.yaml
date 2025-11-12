@@ -1,0 +1,62 @@
+# Example configuration for a Rust service (e.g., fks_meta, fks_execution, fks_main)
+
+service:
+  name: fks_meta
+  port: 8005
+  host: "0.0.0.0"
+  environment: development
+  log_level: INFO
+
+# Database and Redis are optional for Rust services
+# Uncomment if your service uses them:
+
+# database:
+#   host: localhost
+#   port: 5432
+#   name: fks_db
+#   user: fks_user
+#   password: ""  # Use FKS_DATABASE_PASSWORD environment variable
+#   pool_size: 10
+#   max_overflow: 20
+
+# redis:
+#   host: localhost
+#   port: 6379
+#   db: 0
+#   password: ""  # Use FKS_REDIS_PASSWORD environment variable
+#   decode_responses: true
+
+api:
+  base_url: "http://localhost:8000"
+  timeout: 30
+  retry_attempts: 3
+  retry_delay: 1
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+paths:
+  data_dir: "./data"
+  logs_dir: "./logs"
+  cache_dir: "./cache"
+  models_dir: "./models"
+
+features:
+  enable_mt5_bridge: true
+
+# Service-specific configuration for fks_meta
+service_specific:
+  mt5_terminal_path: ""  # Use FKS_MT5_TERMINAL_PATH environment variable
+  mt5_data_path: ""  # Use FKS_MT5_DATA_PATH environment variable
+  mt5_account_number: 0  # Use FKS_MT5_ACCOUNT_NUMBER environment variable
+  mt5_password: ""  # Use FKS_MT5_PASSWORD environment variable
+  mt5_server: ""  # Use FKS_MT5_SERVER environment variable
+  mt5_symbol_prefix: ""
+  mt5_timeout_ms: 5000
+  mt5_retry_attempts: 3
+  mt5_retry_delay_ms: 1000
+  mt5_testnet: false
+  mt5_bridge_url: ""  # Use FKS_MT5_BRIDGE_URL environment variable
+

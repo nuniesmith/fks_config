@@ -1,0 +1,55 @@
+# FKS Auth Service Configuration
+# Central config location: repo/main/config/services/fks_auth.yaml
+
+service:
+  name: fks_auth
+  port: 8009
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies: []  # No dependencies
+
+database:
+  host: ${POSTGRES_HOST:-postgres}
+  port: ${POSTGRES_PORT:-5432}
+  name: ${POSTGRES_DB:-trading_db}
+  user: ${POSTGRES_USER:-postgres}
+  password: ""  # Use env var: POSTGRES_PASSWORD
+
+api:
+  timeout: 10
+  retries: 2
+  rate_limit: 500
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+paths:
+  logs: /app/logs  # Inside container
+  data: /app/data
+
+features:
+  jwt_auth: true
+  user_management: true
+  session_management: true
+
+service_specific:
+  jwt:
+    secret: ""  # Use env var: JWT_SECRET
+    algorithm: HS256
+    expiry: 3600  # 1 hour
+    refresh_expiry: 86400  # 24 hours
+  password:
+    min_length: 8
+    require_uppercase: true
+    require_lowercase: true
+    require_numbers: true
+    require_special: true
+  session:
+    timeout: 3600
+    max_sessions: 5
+

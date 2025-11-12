@@ -1,0 +1,64 @@
+# FKS Training Service Configuration
+# Central config location: repo/main/config/services/fks_training.yaml
+
+service:
+  name: fks_training
+  port: 8011
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies:
+  fks_data:
+    base_url: http://fks_data:8003
+    health_url: http://fks_data:8003/health
+  fks_ai:
+    base_url: http://fks_ai:8007
+    health_url: http://fks_ai:8007/health
+
+database:
+  host: ${POSTGRES_HOST:-postgres}
+  port: ${POSTGRES_PORT:-5432}
+  name: ${POSTGRES_DB:-trading_db}
+  user: ${POSTGRES_USER:-postgres}
+  password: ""  # Use env var: POSTGRES_PASSWORD
+
+api:
+  timeout: 300  # Long timeout for training operations
+  retries: 1
+  rate_limit: 10
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 60
+
+paths:
+  logs: /app/logs  # Inside container
+  models: /app/models
+  data: /app/data
+  tensorboard: /app/logs/tensorboard
+
+features:
+  ppo_training: true
+  meta_learning: true
+  backtesting: true
+  model_evaluation: true
+
+service_specific:
+  training:
+    batch_size: 32
+    learning_rate: 0.0003
+    max_episodes: 10000
+    save_interval: 100
+  ppo:
+    clip_epsilon: 0.2
+    value_coef: 0.5
+    entropy_coef: 0.01
+    gamma: 0.99
+  mlflow:
+    enabled: true
+    tracking_uri: ${MLFLOW_TRACKING_URI:-http://localhost:5000}
+    experiment_name: fks_training
+

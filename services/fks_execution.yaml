@@ -1,0 +1,61 @@
+# FKS Execution Service Configuration
+# Central config location: repo/main/config/services/fks_execution.yaml
+
+service:
+  name: fks_execution
+  port: 8004
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies:
+  fks_api:
+    base_url: http://fks_api:8001
+    health_url: http://fks_api:8001/health
+  fks_data:
+    base_url: http://fks_data:8003
+    health_url: http://fks_data:8003/health
+
+database:
+  host: ${POSTGRES_HOST:-postgres}
+  port: ${POSTGRES_PORT:-5432}
+  name: ${POSTGRES_DB:-trading_db}
+  user: ${POSTGRES_USER:-postgres}
+  password: ""  # Use env var: POSTGRES_PASSWORD
+
+api:
+  timeout: 30
+  retries: 3
+  rate_limit: 100
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+paths:
+  logs: /app/logs  # Inside container
+  data: /app/data
+
+features:
+  manual_execution: true
+  order_validation: true
+  risk_checks: true
+
+service_specific:
+  exchanges:
+    binance:
+      enabled: true
+      api_key: ""  # Use env var: BINANCE_API_KEY
+      api_secret: ""  # Use env var: BINANCE_API_SECRET
+      testnet: ${BINANCE_TESTNET:-false}
+    kraken:
+      enabled: false
+      api_key: ""  # Use env var: KRAKEN_API_KEY
+      api_secret: ""  # Use env var: KRAKEN_API_SECRET
+  risk_management:
+    max_position_size: 10000
+    max_daily_loss: 1000
+    require_approval: true
+

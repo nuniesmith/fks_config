@@ -1,0 +1,57 @@
+# FKS API Service Configuration
+# Central config location: repo/main/config/services/fks_api.yaml
+
+service:
+  name: fks_api
+  port: 8001
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies:
+  fks_data:
+    base_url: http://fks_data:8003
+    health_url: http://fks_data:8003/health
+  fks_auth:
+    base_url: http://fks_auth:8009
+    health_url: http://fks_auth:8009/health
+
+database:
+  host: ${POSTGRES_HOST:-postgres}
+  port: ${POSTGRES_PORT:-5432}
+  name: ${POSTGRES_DB:-trading_db}
+  user: ${POSTGRES_USER:-postgres}
+  password: ""  # Use env var: POSTGRES_PASSWORD
+
+redis:
+  host: ${REDIS_HOST:-redis}
+  port: ${REDIS_PORT:-6379}
+  db: 5
+  password: ""  # Use env var: REDIS_PASSWORD
+
+api:
+  timeout: 30
+  retries: 3
+  rate_limit: 200
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+paths:
+  logs: /app/logs  # Inside container
+  data: /app/data
+
+features:
+  authentication: true
+  rate_limiting: true
+  request_logging: true
+
+service_specific:
+  auth:
+    jwt_secret: ""  # Use env var: JWT_SECRET
+    jwt_expiry: 3600  # 1 hour
+    require_auth: true
+
