@@ -1,0 +1,34 @@
+name: Sync Config to All Services
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'fks-config-base.yaml'
+      - 'tracing.yaml'
+      - 'services/**'
+      - 'shared/**'
+  workflow_dispatch:
+    inputs:
+      target_repos:
+        description: 'Comma-separated list of repos to sync (leave empty for all)'
+        required: false
+        type: string
+      create_pr:
+        description: 'Create PR instead of direct push'
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  sync-shared-configs:
+    uses: nuniesmith/fks_actions/.github/workflows/config-sync.yml@main
+    with:
+      config_repo: "nuniesmith/fks_config"
+      config_files: "fks-config-base.yaml tracing.yaml"
+      target_repos: ${{ inputs.target_repos || 'fks_ai,fks_analyze,fks_api,fks_app,fks_auth,fks_data,fks_execution,fks_main,fks_meta,fks_monitor,fks_portfolio,fks_training,fks_web' }}
+      target_path: "config/"
+      create_pr: ${{ inputs.create_pr || true }}
+      branch_name: "config-sync"
+    secrets:
+      github_token: ${{ secrets.GITHUB_TOKEN }}
