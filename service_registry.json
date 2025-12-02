@@ -1,6 +1,6 @@
 {
-  "version": "1.2",
-  "updated": "2025-11-12T00:00:00.000000",
+  "version": "1.5",
+  "updated": "2025-12-02T00:00:00.000000",
   "services": {
     "fks_web": {
       "name": "fks_web",
@@ -12,7 +12,24 @@
         "fks_api",
         "fks_auth"
       ],
-      "note": "Port 3001 in Kubernetes, port 8000 in Docker"
+      "databases": [
+        {
+          "name": "fks_web_db",
+          "type": "postgresql",
+          "version": "16",
+          "port": 5434,
+          "schema": "app",
+          "purpose": "Application-specific data (UserProfile, PortfolioAccount, TradingSignal, APIKey, etc.)"
+        },
+        {
+          "name": "fks_web_redis",
+          "type": "redis",
+          "version": "7",
+          "port": 6381,
+          "purpose": "Caching and session storage"
+        }
+      ],
+      "note": "Port 3001 in Kubernetes, port 8000 in Docker. Uses separate database (fks_web_db) for app data."
     },
     "fks_api": {
       "name": "fks_api",
@@ -22,7 +39,14 @@
       "dependencies": [
         "fks_data",
         "fks_auth"
-      ]
+      ],
+      "framework": "fastapi",
+      "test_command": "pytest -n auto --cov=src --cov-report=term-missing",
+      "test_dependencies": [
+        "fks_data",
+        "fks_auth"
+      ],
+      "requires_gpu": false
     },
     "fks_app": {
       "name": "fks_app",
@@ -40,7 +64,24 @@
       "port": 8003,
       "base_url": "http://fks-data:8003",
       "health_url": "http://fks-data:8003/health",
-      "dependencies": []
+      "dependencies": [],
+      "databases": [
+        {
+          "name": "fks_data_db",
+          "type": "postgresql",
+          "version": "16",
+          "port": 5433,
+          "purpose": "Market data storage (TimescaleDB for time-series data)"
+        },
+        {
+          "name": "fks_data_redis",
+          "type": "redis",
+          "version": "7",
+          "port": 6380,
+          "purpose": "Caching for market data"
+        }
+      ],
+      "note": "Market data service. Migrated to FastAPI. Supports Massive.com Futures API (REST + WebSocket). All futures endpoints available at /api/v1/futures/*"
     },
     "fks_execution": {
       "name": "fks_execution",
@@ -85,25 +126,48 @@
       "dependencies": [
         "fks_data"
       ],
+      "framework": "fastapi",
+      "test_command": "pytest -n auto --cov=src --cov-report=term-missing",
+      "test_dependencies": [
+        "fks_data"
+      ],
+      "requires_gpu": true,
       "gpu_enabled": true,
       "note": "GPU support enabled (1x nvidia.com/gpu)"
     },
     "fks_analyze": {
       "name": "fks_analyze",
       "port": 8008,
+      "port_docker": 8081,
       "base_url": "http://fks-analyze:8008",
-      "health_url": "http://fks-analyze:8008/health",
+      "health_url": "http://fks-analyze:8008/health/health",
       "dependencies": [
         "fks_data",
         "fks_ai"
-      ]
+      ],
+      "note": "Port 8008 in container, port 8081 in Docker. Health endpoint at /health/health"
     },
     "fks_auth": {
       "name": "fks_auth",
       "port": 8009,
       "base_url": "http://fks-auth:8009",
       "health_url": "http://fks-auth:8009/health",
-      "dependencies": []
+      "dependencies": [],
+      "databases": [
+        {
+          "name": "fks_auth_db",
+          "type": "postgresql",
+          "version": "16",
+          "port": 5435,
+          "schema": "auth",
+          "purpose": "Authentication data (users, roles, permissions). Currently in dev mode with hardcoded users."
+        }
+      ],
+      "framework": "axum",
+      "test_command": "cargo test --workspace --all-targets",
+      "test_dependencies": [],
+      "requires_gpu": false,
+      "note": "Rust/Axum authentication service. Currently runs in dev mode with hardcoded users. Database ready for future migration."
     },
     "fks_main": {
       "name": "fks_main",
@@ -114,7 +178,12 @@
         "fks_monitor"
       ],
       "language": "Rust",
-      "framework": "Axum",
+      "framework": "axum",
+      "test_command": "cargo test --workspace --all-targets",
+      "test_dependencies": [
+        "fks_monitor"
+      ],
+      "requires_gpu": false,
       "note": "Rust-based orchestration and management service"
     },
     "fks_training": {
@@ -141,11 +210,55 @@
       "name": "fks_monitor",
       "port": 8013,
       "base_url": "http://fks-monitor:8013",
-      "health_url": "http://fks-monitor:8013/health",
+      "health_url": "http://fks-monitor:8013/health/health",
       "dependencies": [
         "all"
       ],
-      "note": "Monitors all FKS services and provides unified API for fks_main orchestration"
+      "note": "Monitors all FKS services and provides unified API for fks_main orchestration. Health endpoint at /health/health"
+    },
+    "fks_crypto": {
+      "name": "fks_crypto",
+      "port": 8014,
+      "base_url": "http://fks-crypto:8014",
+      "health_url": "http://fks-crypto:8014/health",
+      "dependencies": [
+        "fks_data",
+        "fks_auth"
+      ],
+      "note": "Crypto signal generation and analysis service for 20+ coins. Provides trading signals for manual execution and crypto market analysis."
+    },
+    "fks_futures": {
+      "name": "fks_futures",
+      "port": 8015,
+      "base_url": "http://fks-futures:8015",
+      "health_url": "http://fks-futures:8015/health",
+      "dependencies": [
+        "fks_data",
+        "fks_app",
+        "fks_execution",
+        "fks_ninja",
+        "fks_auth"
+      ],
+      "note": "Futures trading service for CME Group futures contracts. Provides futures-specific signals and analysis. Integrates with NinjaTrader8 via fks_ninja."
+    },
+    "fks_data_ingestion": {
+      "name": "fks_data_ingestion",
+      "port": 8020,
+      "base_url": "http://fks-data-ingestion:8020",
+      "health_url": "http://fks-data-ingestion:8020/health",
+      "dependencies": [],
+      "note": "Data ingestion service for stock, futures, and news data from Massive.com and NewsAPI. Includes gap detection and completeness checking."
+    },
+    "fks_feature_engineering": {
+      "name": "fks_feature_engineering",
+      "port": 8021,
+      "base_url": "http://fks-feature-engineering:8021",
+      "health_url": "http://fks-feature-engineering:8021/health",
+      "dependencies": [
+        "fks_data",
+        "fks_data_ingestion"
+      ],
+      "note": "Feature engineering service for computing 112+ features from raw market data. Technical indicators, correlations, Fourier analysis, ARIMA, and FinBERT sentiment."
     }
   }
 }

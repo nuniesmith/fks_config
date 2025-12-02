@@ -1,0 +1,99 @@
+# FKS Crypto Service Configuration
+# Central config location: repo/config/services/fks_crypto.yaml
+
+service:
+  name: fks_crypto
+  port: 8014
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies:
+  fks_data:
+    base_url: http://fks-data:8003
+    health_url: http://fks-data:8003/health
+  fks_auth:
+    base_url: http://fks-auth:8009
+    health_url: http://fks-auth:8009/health
+
+api:
+  timeout: 30
+  retries: 3
+  rate_limit: 500
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+paths:
+  logs: /app/logs # Inside container
+  data: /app/data
+  backups: /app/backups
+
+features:
+  signal_generation: true
+  trading_signals: true
+  performance_tracking: true
+  prop_firm_rules: true
+  discord_notifications: true
+  crypto_analysis: true # NEW: Crypto market analysis
+  market_analysis: true
+  volatility_analysis: true
+  correlation_analysis: true
+  regime_detection: true
+  sentiment_analysis: true
+
+service_specific:
+  trading:
+    exchange: bybit
+    account_type: ${BYBIT_ACCOUNT_TYPE:-demo}
+    trading_mode: ${TRADING_MODE_TYPE:-simulation}
+    leverage: 10
+    margin_mode: Isolated
+  signals:
+    enabled_coins: 20+
+    dca_strategy: true
+    risk_management: true
+    position_sizing: true
+  data:
+    use_fks_data: true # Use fks_data service instead of direct collection
+    data_interval: 1 # 1-minute intervals
+  auth:
+    use_fks_auth: true # Use fks_auth service instead of local auth
+  web_interface:
+    enabled: false # Web interface moved to fks_web
+  discord:
+    webhook_url: ${DISCORD_WEBHOOK_URL:-}
+    rate_limit_seconds: 60
+    enable_entry_signals: false
+  analysis:
+    market_analyzer:
+      enabled: true
+      update_interval: 300 # 5 minutes
+      lookback_periods: 100
+    volatility_analyzer:
+      enabled: true
+      lookback_periods: 20
+      window_size: 24 # hours
+    correlation_analyzer:
+      enabled: true
+      correlation_window: 30 # days
+      min_correlation: 0.3
+    regime_detector:
+      enabled: true
+      update_interval: 600 # 10 minutes
+      regimes:
+        - bull
+        - bear
+        - sideways
+        - volatile
+    sentiment_analyzer:
+      enabled: true
+      data_sources:
+        - social_media
+        - news
+        - on_chain
+      update_interval: 900 # 15 minutes
+

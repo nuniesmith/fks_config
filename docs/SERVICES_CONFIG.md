@@ -24,7 +24,10 @@ repo/main/config/
 │   ├── fks_meta.yaml
 │   ├── fks_monitor.yaml
 │   ├── fks_training.yaml
-│   └── fks_portfolio.yaml
+│   ├── fks_portfolio.yaml
+│   ├── fks_crypto.yaml
+│   ├── fks_futures.yaml
+│   └── fks_ninja.yaml
 ├── shared/                         # Shared configuration
 │   ├── logging.yaml                # Logging configuration
 │   ├── monitoring.yaml            # Monitoring configuration

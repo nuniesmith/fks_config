@@ -1,0 +1,38 @@
+services:
+  fks-config:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: nuniesmith/fks:config-latest
+    container_name: fks-config
+    ports:
+      - "8015:8015"
+    volumes:
+      # Mount config directory (read-write for updates)
+      - ./services:/app/config/services:rw
+      - ./shared:/app/config/shared:ro
+      # Mount secrets directory
+      - config-secrets:/app/config/.secrets
+    environment:
+      - SERVICE_NAME=fks_config
+      - SERVICE_PORT=8015
+      - CONFIG_DIR=/app/config
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-}
+    networks:
+      - fks-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8015/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  config-secrets:
+    driver: local
+
+networks:
+  fks-network:
+    external: true
+

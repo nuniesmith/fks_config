@@ -9,14 +9,14 @@ service:
   log_level: ${LOG_LEVEL:-INFO}
 
 # Dependencies from service_registry.json
-dependencies: []  # No dependencies
+dependencies: [] # No dependencies
 
 redis:
   host: ${REDIS_HOST:-redis}
   port: ${REDIS_PORT:-6379}
   db: 2
-  password: ""  # Use env var: REDIS_PASSWORD
-  cache_ttl: 300  # 5 minutes
+  password: "" # Use env var: REDIS_PASSWORD
+  cache_ttl: 300 # 5 minutes
 
 api:
   timeout: 30
@@ -29,7 +29,7 @@ monitoring:
   health_check_interval: 30
 
 paths:
-  logs: /app/logs  # Inside container
+  logs: /app/logs # Inside container
   data: /app/data
   cache: /app/cache
 
@@ -42,13 +42,18 @@ service_specific:
   adapters:
     binance:
       enabled: true
-      api_key: ""  # Use env var: BINANCE_API_KEY
-      api_secret: ""  # Use env var: BINANCE_API_SECRET
+      api_key: "" # Use env var: BINANCE_API_KEY
+      api_secret: "" # Use env var: BINANCE_API_SECRET
       cache_ttl: 300
     polygon:
       enabled: true
-      api_key: ""  # Use env var: POLYGON_API_KEY
+      api_key: "" # Use env var: POLYGON_API_KEY
       cache_ttl: 300
+    massive_futures:
+      enabled: true
+      api_key: "" # Use env var: MASSIVE_API_KEY, FKS_MASSIVE_API_KEY, or POLYGON_API_KEY
+      cache_ttl: 300
+      websocket_enabled: true
     yahoo:
       enabled: true
       cache_ttl: 300
@@ -56,4 +61,3 @@ service_specific:
     enabled: true
     verify_signatures: true
     timeout: 10
-

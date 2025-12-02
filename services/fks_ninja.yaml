@@ -1,0 +1,136 @@
+# FKS Ninja Service Configuration
+# Central config location: repo/config/services/fks_ninja.yaml
+# Plugin service for NinjaTrader8 integration
+
+service:
+  name: fks_ninja
+  port: 8006
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies:
+  fks_execution:
+    base_url: http://fks-execution:8004
+    health_url: http://fks-execution:8004/health
+  fks_data:
+    base_url: http://fks-data:8003
+    health_url: http://fks-data:8003/health
+
+database:
+  host: ${POSTGRES_HOST:-postgres}
+  port: ${POSTGRES_PORT:-5432}
+  name: ${POSTGRES_DB:-trading_db}
+  user: ${POSTGRES_USER:-postgres}
+  password: "" # Use env var: POSTGRES_PASSWORD
+
+redis:
+  host: ${REDIS_HOST:-redis}
+  port: ${REDIS_PORT:-6379}
+  db: 6 # Unique DB number for fks_ninja
+  password: "" # Use env var: REDIS_PASSWORD
+  cache_ttl: 60 # 1 minute default (short for real-time signals)
+
+api:
+  timeout: 10 # Shorter timeout for real-time trading
+  retries: 3
+  rate_limit: 1000 # Higher rate limit for signal polling
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 10 # More frequent checks for trading service
+
+paths:
+  logs: /app/logs # Inside container
+  data: /app/data
+  cache: /app/cache
+
+features:
+  ninjatrader8_integration: true
+  signal_reception: true
+  order_execution: true
+  execution_status_reporting: true
+
+service_specific:
+  ninjatrader8:
+    # NinjaTrader8 connection settings
+    # NT8 runs on Windows desktop, connects via TCP socket
+    host: ${NT8_HOST:-100.80.141.117}
+    port: ${NT8_PORT:-8080}
+    protocol: tcp
+    timeout_ms: 5000
+    retry_attempts: 3
+    retry_delay_ms: 1000
+    reconnect_interval: 5 # seconds
+    heartbeat_interval: 30 # seconds
+
+    # Signal management
+    signal_queue_size: 100
+    signal_timeout: 30 # seconds
+    max_concurrent_signals: 10
+
+    # Order execution
+    execution_timeout: 30 # seconds
+    order_validation: true
+    risk_checks: true
+
+    # Symbol mapping (NT8 symbols to FKS symbols)
+    symbol_mapping:
+      enabled: true
+      # Example mappings:
+      # "ES 03-25": "ES"
+      # "NQ 03-25": "NQ"
+      # "CL 03-25": "CL"
+
+    # Account settings
+    account_number: ${NT8_ACCOUNT_NUMBER:-}
+    testnet: ${NT8_TESTNET:-false}
+
+  signals:
+    # Signal format for NT8 strategy
+    format:
+      action: "BUY|SELL|CLOSE|NONE"
+      symbol: "ES"
+      quantity: 1
+      stop_loss: null # Optional
+      take_profit: null # Optional
+      timestamp: "ISO8601"
+
+    # Signal endpoints
+    endpoints:
+      get_signal: "/api/v1/signals/{symbol}"
+      report_execution: "/api/v1/signals/execute"
+      get_positions: "/api/v1/positions"
+
+    # Signal polling (from NT8 strategy)
+    polling:
+      enabled: true
+      interval: 5 # seconds
+      max_age: 60 # seconds (reject stale signals)
+
+  execution:
+    # Execution reporting
+    report_on_fill: true
+    report_on_partial_fill: true
+    report_on_reject: true
+
+    # Execution status tracking
+    track_executions: true
+    execution_timeout: 30 # seconds
+
+  futures:
+    # Futures-specific settings
+    contract_months:
+      - "H" # March
+      - "M" # June
+      - "U" # September
+      - "Z" # December
+
+    # Rollover logic
+    rollover_days_before_expiry: 5
+
+    # Symbol normalization
+    normalize_symbols: true
+    strip_expiry: true # Convert "ES 03-25" to "ES"

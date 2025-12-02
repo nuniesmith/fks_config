@@ -1,0 +1,148 @@
+# FKS Futures Service Configuration
+# Central config location: repo/config/services/fks_futures.yaml
+
+service:
+  name: fks_futures
+  port: 8015
+  host: 0.0.0.0
+  environment: ${ENVIRONMENT:-development}
+  log_level: ${LOG_LEVEL:-INFO}
+
+# Dependencies from service_registry.json
+dependencies:
+  fks_data:
+    base_url: http://fks-data:8003
+    health_url: http://fks-data:8003/health
+  fks_app:
+    base_url: http://fks-app:8002
+    health_url: http://fks-app:8002/health
+  fks_execution:
+    base_url: http://fks-execution:8004
+    health_url: http://fks-execution:8004/health
+  fks_ninja:
+    base_url: http://fks-ninja:8006
+    health_url: http://fks-ninja:8006/health
+  fks_auth:
+    base_url: http://fks-auth:8009
+    health_url: http://fks-auth:8009/health
+
+database:
+  host: ${POSTGRES_HOST:-postgres}
+  port: ${POSTGRES_PORT:-5432}
+  name: ${POSTGRES_DB:-trading_db}
+  user: ${POSTGRES_USER:-postgres}
+  password: "" # Use env var: POSTGRES_PASSWORD
+
+redis:
+  host: ${REDIS_HOST:-redis}
+  port: ${REDIS_PORT:-6379}
+  db: 15 # Unique DB number for fks_futures
+  password: "" # Use env var: REDIS_PASSWORD
+  cache_ttl: 300 # 5 minutes default
+
+api:
+  timeout: 30
+  retries: 3
+  rate_limit: 200
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  health_check_interval: 30
+
+paths:
+  logs: /app/logs # Inside container
+  data: /app/data
+  cache: /app/cache
+  models: /app/models
+
+features:
+  signal_generation: true
+  futures_analysis: true
+  market_analysis: true
+  volatility_analysis: true
+  correlation_analysis: true
+  ninjatrader8_integration: true
+
+service_specific:
+  futures:
+    exchange: CME
+    asset_categories:
+      - equities
+      - energy
+      - metals
+      - agriculture
+      - fx
+      - crypto
+    contract_specs:
+      enabled: true
+      cache_duration: 3600 # 1 hour
+  signals:
+    coordinator_enabled: true
+    delegate_to_fks_app: true
+    futures_specific_filtering: true
+    risk_management: true
+    position_sizing: true
+  analysis:
+    market_analyzer:
+      enabled: true
+      update_interval: 300 # 5 minutes
+    volatility_analyzer:
+      enabled: true
+      lookback_periods: 20
+    correlation_analyzer:
+      enabled: true
+      correlation_window: 60 # days
+  ninjatrader8:
+    integration_enabled: true
+    signal_poll_interval: 5 # seconds
+    execution_timeout: 30 # seconds
+    retry_attempts: 3
+    retry_delay: 1 # seconds
+  assets:
+    registry:
+      hardcoded: true
+      auto_discover: false
+    categories:
+      equities:
+        - ES # E-mini S&P 500
+        - NQ # E-mini Nasdaq-100
+        - RTY # E-mini Russell 2000
+        - YM # E-mini Dow
+        - MES # Micro E-mini S&P 500
+        - MNQ # Micro E-mini Nasdaq-100
+      energy:
+        - CL # Crude Oil
+        - NG # Natural Gas
+        - RB # RBOB Gasoline
+        - HO # NY Harbor ULSD
+        - MCL # Micro WTI Crude Oil
+        - MNG # Micro Natural Gas
+      metals:
+        - GC # Gold
+        - SI # Silver
+        - HG # Copper
+        - PL # Platinum
+        - MGC # Micro Gold
+        - SIL # Micro Silver
+      agriculture:
+        - C # Corn
+        - S # Soybeans
+        - W # Wheat
+        - ZC # Corn (Globex)
+        - ZS # Soybeans (Globex)
+        - ZW # Wheat (Globex)
+      fx:
+        - 6E # Euro FX
+        - 6J # Japanese Yen
+        - 6B # British Pound
+        - 6C # Canadian Dollar
+        - M6E # Micro EUR/USD
+        - MJY # Micro JPY/USD
+      crypto:
+        - BTC # Bitcoin Futures
+        - ETH # Ether Futures
+        - SOL # Solana Futures
+        - XRP # XRP Futures
+        - MBT # Micro Bitcoin
+        - MET # Micro Ether
