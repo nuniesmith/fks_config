@@ -83,11 +83,11 @@
       ],
       "note": "Market data service. Migrated to FastAPI. Supports Massive.com Futures API (REST + WebSocket). All futures endpoints available at /api/v1/futures/*"
     },
-    "fks_execution": {
-      "name": "fks_execution",
+    "fks_execution_main": {
+      "name": "fks_execution_main",
       "port": 8004,
-      "base_url": "http://fks-execution:8004",
-      "health_url": "http://fks-execution:8004/health",
+      "base_url": "http://fks-execution-main:8004",
+      "health_url": "http://fks-execution-main:8004/health",
       "dependencies": [
         "fks_api",
         "fks_data"
@@ -95,7 +95,19 @@
       "plugins": [
         "fks_meta",
         "fks_ninja"
-      ]
+      ],
+      "note": "Main execution service for traditional markets (stocks, futures via NinjaTrader, MT5)"
+    },
+    "fks_execution_crypto": {
+      "name": "fks_execution_crypto",
+      "port": 8006,
+      "base_url": "http://fks-execution-crypto:8006",
+      "health_url": "http://fks-execution-crypto:8006/health",
+      "dependencies": [
+        "fks_api",
+        "fks_data"
+      ],
+      "note": "Crypto execution service for fast order execution on crypto exchanges (Binance, Bybit, KuCoin)"
     },
     "fks_meta": {
       "name": "fks_meta",
@@ -103,7 +115,7 @@
       "base_url": "http://fks-meta:8005",
       "health_url": "http://fks-meta:8005/health",
       "dependencies": [
-        "fks_execution",
+        "fks_execution_main",
         "fks_data"
       ]
     },
@@ -113,7 +125,7 @@
       "base_url": "http://fks-ninja:8006",
       "health_url": "http://fks-ninja:8006/health",
       "dependencies": [
-        "fks_execution",
+        "fks_execution_main",
         "fks_data"
       ],
       "note": "Python/Rust API service communicating with NinjaTrader8 via TCP sockets (port 8080). NinjaTrader8 runs separately on Windows desktop (100.80.141.117:8080)."
@@ -124,7 +136,8 @@
       "base_url": "http://fks-ai:8007",
       "health_url": "http://fks-ai:8007/health",
       "dependencies": [
-        "fks_data"
+        "fks_data",
+        "fks_ollama"
       ],
       "framework": "fastapi",
       "test_command": "pytest -n auto --cov=src --cov-report=term-missing",
@@ -133,19 +146,53 @@
       ],
       "requires_gpu": true,
       "gpu_enabled": true,
-      "note": "GPU support enabled (1x nvidia.com/gpu)"
+      "note": "GPU support enabled (1x nvidia.com/gpu). Uses fks_ollama for LLM inference."
     },
-    "fks_analyze": {
-      "name": "fks_analyze",
+    "fks_ollama": {
+      "name": "fks_ollama",
+      "port": 11434,
+      "base_url": "http://fks-ollama:11434",
+      "health_url": "http://fks-ollama:11434/api/tags",
+      "dependencies": [],
+      "requires_gpu": true,
+      "gpu_enabled": true,
+      "note": "Standalone Ollama service for local LLM inference. Used by fks_ai and fks_analyze_main."
+    },
+    "fks_analyze_main": {
+      "name": "fks_analyze_main",
       "port": 8008,
-      "port_docker": 8081,
-      "base_url": "http://fks-analyze:8008",
-      "health_url": "http://fks-analyze:8008/health/health",
+      "base_url": "http://fks-analyze-main:8008",
+      "health_url": "http://fks-analyze-main:8008/health",
       "dependencies": [
         "fks_data",
-        "fks_ai"
+        "fks_ai",
+        "fks_ollama"
       ],
-      "note": "Port 8008 in container, port 8081 in Docker. Health endpoint at /health/health"
+      "note": "Main analysis service that aggregates market info from all analyzer services. Other FKS services get market info from here."
+    },
+    "fks_analyze_crypto_spot": {
+      "name": "fks_analyze_crypto_spot",
+      "port": 8014,
+      "base_url": "http://fks-analyze-crypto-spot:8014",
+      "health_url": "http://fks-analyze-crypto-spot:8014/health",
+      "dependencies": [
+        "fks_data",
+        "fks_auth",
+        "fks_analyze_main"
+      ],
+      "note": "Crypto spot analysis service. Communicates with fks_analyze_main to provide market info."
+    },
+    "fks_analyze_crypto_futures": {
+      "name": "fks_analyze_crypto_futures",
+      "port": 8015,
+      "base_url": "http://fks-analyze-crypto-futures:8015",
+      "health_url": "http://fks-analyze-crypto-futures:8015/health",
+      "dependencies": [
+        "fks_data",
+        "fks_auth",
+        "fks_analyze_main"
+      ],
+      "note": "Crypto futures analysis service. Communicates with fks_analyze_main to provide market info."
     },
     "fks_auth": {
       "name": "fks_auth",
@@ -216,26 +263,15 @@
       ],
       "note": "Monitors all FKS services and provides unified API for fks_main orchestration. Health endpoint at /health/health"
     },
-    "fks_crypto": {
-      "name": "fks_crypto",
-      "port": 8014,
-      "base_url": "http://fks-crypto:8014",
-      "health_url": "http://fks-crypto:8014/health",
-      "dependencies": [
-        "fks_data",
-        "fks_auth"
-      ],
-      "note": "Crypto signal generation and analysis service for 20+ coins. Provides trading signals for manual execution and crypto market analysis."
-    },
     "fks_futures": {
       "name": "fks_futures",
-      "port": 8015,
-      "base_url": "http://fks-futures:8015",
-      "health_url": "http://fks-futures:8015/health",
+      "port": 8016,
+      "base_url": "http://fks-futures:8016",
+      "health_url": "http://fks-futures:8016/health",
       "dependencies": [
         "fks_data",
         "fks_app",
-        "fks_execution",
+        "fks_execution_main",
         "fks_ninja",
         "fks_auth"
       ],
